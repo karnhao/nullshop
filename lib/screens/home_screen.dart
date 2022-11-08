@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(
                         height: 6,
                       ),
-                      const Text("\$price",
+                      const Text("\$ price",
                           style: TextStyle(
                               fontSize: 14.0, fontWeight: FontWeight.w500)),
                     ],

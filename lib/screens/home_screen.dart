@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.all(6.0),
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: 0.65),
+                crossAxisCount: 2, childAspectRatio: 13 / 20),
             itemCount: 10,
             itemBuilder: (context, index) {
               return Padding(

@@ -2,11 +2,12 @@ import 'package:nullshop/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 class MainBtnWidget extends StatelessWidget {
-  Color colorBtn;
-  String textBtn;
-  bool isTransparent;
-  bool haveIcon;
-  MainBtnWidget(
+  final Color colorBtn;
+  final String textBtn;
+  final bool isTransparent;
+  final bool haveIcon;
+
+  const MainBtnWidget(
       {Key? key,
       required this.colorBtn,
       required this.textBtn,

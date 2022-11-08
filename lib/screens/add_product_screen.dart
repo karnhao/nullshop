@@ -78,7 +78,7 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
                   formKey.currentState!.save();
                 }
               },
-              child: MainBtnWidget(
+              child: const MainBtnWidget(
                 colorBtn: kColorsPurple,
                 textBtn: "Confirm",
                 haveIcon: false,

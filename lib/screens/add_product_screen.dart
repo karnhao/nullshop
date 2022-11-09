@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
@@ -13,6 +16,9 @@ class AddProdectScreen extends StatefulWidget {
 }
 
 class _AddProdectScreenState extends State<AddProdectScreen> {
+  File? imageFile;
+  final picker = ImagePicker();
+
   final formKey = GlobalKey<FormState>();
   String? productCategory = "Pen",
       productName,
@@ -63,6 +69,25 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: InkWell(
+                          onTap: (() {
+                            showButtomSheet(context);
+                          }),
+                          child: Container(
+                            width: 153,
+                            height: 153,
+                            decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                color: kColorsRed),
+                            child: Center(
+                                child: Text("Add image",
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1)),
+                          )),
+                    ),
                     createProductCategory(),
                     createProductName(),
                     createProductPrice(),
@@ -191,7 +216,7 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
       'Folder'
     ];
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: InputDecorator(
           decoration: InputDecoration(
               label: const Text("Categories"),
@@ -225,5 +250,55 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
                 }),
           ),
         ));
+  }
+
+  Future<void> showButtomSheet(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: ((context) {
+          return Wrap(
+            children: [
+              ListTile(
+                leading: SvgPicture.asset('assets/icons/gallery.svg',
+                    color: kColorsPurple),
+                title: Text("Gallery",
+                    style: Theme.of(context).textTheme.subtitle1),
+                onTap: () {
+                  openGallery(context);
+                },
+              ),
+              ListTile(
+                  leading: SvgPicture.asset('assets/icons/camera.svg',
+                      color: kColorsPurple),
+                  title: Text("Camera",
+                      style: Theme.of(context).textTheme.subtitle1),
+                  onTap: () {
+                    openCamera(context);
+                  })
+            ],
+          );
+        }));
+  }
+
+  openGallery(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        imageFile = File(pickedFile.path);
+      } else {}
+    });
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  openCamera(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        imageFile = File(pickedFile.path);
+      } else {}
+    });
+    if (!mounted) return;
+    Navigator.of(context).pop();
   }
 }

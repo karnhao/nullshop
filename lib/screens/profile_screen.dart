@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/coin_menu_widget.dart';
 import 'package:nullshop/widgets/main_btn.dart';
@@ -12,6 +15,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final User? user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,10 +38,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: kColorsWhite)),
           IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/profile');
+                Navigator.pushNamed(context, "/add-product");
               },
-              icon:
-                  SvgPicture.asset('assets/icons/me.svg', color: kColorsWhite))
+              icon: SvgPicture.asset("assets/icons/add.svg",
+                  color: kColorsWhite)),
         ],
       ),
       body: SingleChildScrollView(
@@ -49,8 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: InkWell(
                     onTap: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('/login', (route) => false);
+                      logoutHandle(context: context);
                     },
                     child: const MainBtnWidget(
                         colorBtn: kColorsRed,
@@ -93,11 +97,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hi! Username',
+                  Text('Hi! ${user?.displayName ?? "User"}',
                       style: Theme.of(context).textTheme.headline3),
                   const SizedBox(height: 10),
-                  const Text('xxx@gmail.com',
-                      style: TextStyle(
+                  Text('Email: ${user?.email ?? "Unknown Email"}',
+                      style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w400,
                           color: kColorsWhite,
@@ -227,5 +231,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         )
       ],
     );
+  }
+
+  Future<void> logoutHandle({required BuildContext context}) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    } on FirebaseAuthException catch (e) {
+      log(e.message!);
+    }
   }
 }

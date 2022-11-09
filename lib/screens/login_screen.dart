@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
@@ -12,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
-  String? username, password;
+  String? email, password;
 
   @override
   Widget build(BuildContext context) {
@@ -42,14 +45,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   Padding(
                     padding:
                         const EdgeInsets.only(left: 40, top: 20, bottom: 20),
-                    child: Text('CNC Shop',
+                    child: Text('Null Shop',
                         style: Theme.of(context).textTheme.headline1),
                   ),
                   Form(
                     key: formKey,
                     child: Column(
                       children: [
-                        createUsername(),
+                        createEmail(),
                         createPassword(),
                       ],
                     ),
@@ -58,11 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.only(top: 10, bottom: 20),
                       child: InkWell(
                           onTap: () {
-                            if (formKey.currentState!.validate()) {
-                              formKey.currentState!.save();
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  '/home', (route) => false);
-                            }
+                            loginHandle(context: context);
                           },
                           child: const MainBtnWidget(
                               colorBtn: kColorsPurple,
@@ -137,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget createUsername() {
+  Widget createEmail() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: TextFormField(
@@ -147,15 +146,15 @@ class _LoginScreenState extends State<LoginScreen> {
               fontSize: 16.0,
               fontWeight: FontWeight.w600,
               color: kColorsPurple),
-          decoration: inputDecorationWidget(context, 'Username'),
+          decoration: inputDecorationWidget(context, 'Email'),
           validator: (value) {
             if (value!.isEmpty) {
-              return "Please enter username";
+              return "Please enter email";
             }
             return null;
           },
           onChanged: (value) {
-            username = value;
+            email = value;
           },
         ));
   }
@@ -181,5 +180,28 @@ class _LoginScreenState extends State<LoginScreen> {
             password = value;
           },
         ));
+  }
+
+  Future<void> loginHandle({required BuildContext context}) async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      showDialog(
+          context: context,
+          builder: (context) => const Center(
+                child: CircularProgressIndicator(strokeWidth: 4),
+              ));
+
+      try {
+        await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email!, password: password!);
+        if (!mounted) return;
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
+      } on FirebaseAuthException catch (e) {
+        log(e.message!);
+        Navigator.maybePop(context);
+      }
+    }
   }
 }

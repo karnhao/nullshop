@@ -79,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {},
                 icon: SvgPicture.asset("assets/icons/msg.svg")),
             IconButton(
-                onPressed: () {}, icon: SvgPicture.asset("assets/icons/me.svg"))
+                onPressed: () {
+                  Navigator.pushNamed(context, '/profile');
+                },
+                icon: SvgPicture.asset("assets/icons/me.svg"))
           ],
         ),
         body: Padding(

@@ -52,7 +52,9 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
               icon: SvgPicture.asset("assets/icons/msg.svg",
                   color: kColorsCream)),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/profile');
+              },
               icon:
                   SvgPicture.asset("assets/icons/me.svg", color: kColorsCream))
         ],

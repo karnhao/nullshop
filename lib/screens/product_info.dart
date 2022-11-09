@@ -39,7 +39,9 @@ class _ProductInfoState extends State<ProductInfo> {
                   color: kColorsWhite,
                 )),
             IconButton(
-                onPressed: null,
+                onPressed: () {
+                  Navigator.pushNamed(context, '/profile');
+                },
                 icon: SvgPicture.asset(
                   "assets/icons/me.svg",
                   color: kColorsWhite,

@@ -15,7 +15,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: appTheme(),
       routes: routes,
-      initialRoute: "/home",
+      initialRoute: "/login",
     );
   }
 }

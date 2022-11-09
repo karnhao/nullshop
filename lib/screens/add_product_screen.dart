@@ -75,18 +75,27 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
                           onTap: (() {
                             showButtomSheet(context);
                           }),
-                          child: Container(
-                            width: 153,
-                            height: 153,
-                            decoration: const BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15)),
-                                color: kColorsRed),
-                            child: Center(
-                                child: Text("Add image",
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1)),
-                          )),
+                          child: (imageFile != null)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Image.file(imageFile!,
+                                      width: 153,
+                                      height: 153,
+                                      fit: BoxFit.cover),
+                                )
+                              : Container(
+                                  width: 153,
+                                  height: 153,
+                                  decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                      color: kColorsRed),
+                                  child: Center(
+                                      child: Text("Add image",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1)),
+                                )),
                     ),
                     createProductCategory(),
                     createProductName(),

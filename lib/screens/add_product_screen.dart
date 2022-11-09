@@ -51,13 +51,14 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
                   SvgPicture.asset("assets/icons/me.svg", color: kColorsCream))
         ],
       ),
-      body: ListView(
-        children: [
-          InkWell(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Form(
+      body: InkWell(
+        onTap: (() {
+          FocusScope.of(context).unfocus();
+        }),
+        hoverColor: Colors.white,
+        child: ListView(
+          children: [
+            Form(
               key: formKey,
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -69,24 +70,24 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
                     createProductDescription()
                   ]),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: InkWell(
-              onTap: () {
-                if (formKey.currentState!.validate()) {
-                  formKey.currentState!.save();
-                }
-              },
-              child: const MainBtnWidget(
-                colorBtn: kColorsPurple,
-                textBtn: "Confirm",
-                haveIcon: false,
-                isTransparent: false,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: InkWell(
+                onTap: () {
+                  if (formKey.currentState!.validate()) {
+                    formKey.currentState!.save();
+                  }
+                },
+                child: const MainBtnWidget(
+                  colorBtn: kColorsPurple,
+                  textBtn: "Confirm",
+                  haveIcon: false,
+                  isTransparent: false,
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

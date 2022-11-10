@@ -1,11 +1,14 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:nullshop/services/auth_sesrvice.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/coin_menu_widget.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:nullshop/models/user_model.dart' as model;
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -15,10 +18,17 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final User? user = FirebaseAuth.instance.currentUser;
+  model.User? user;
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
+    authService.getCurrentUser().then((currentUser) {
+      setState(() {
+        user = currentUser!;
+      });
+    });
     return Scaffold(
       backgroundColor: kColorsCream,
       appBar: AppBar(
@@ -97,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hi! ${user?.displayName ?? "User"}',
+                  Text('Hi! ${user?.username ?? "NULL"}',
                       style: Theme.of(context).textTheme.headline3),
                   const SizedBox(height: 10),
                   Text('Email: ${user?.email ?? "Unknown Email"}',
@@ -148,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text('My Coin',
                             style: Theme.of(context).textTheme.headline4),
-                        Text('\$ coin',
+                        Text('\$ ${user?.coin}',
                             style: Theme.of(context).textTheme.subtitle1),
                       ],
                     ),
@@ -234,8 +244,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> logoutHandle({required BuildContext context}) async {
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
     try {
-      await FirebaseAuth.instance.signOut();
+      await authService.signOut();
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     } on FirebaseAuthException catch (e) {

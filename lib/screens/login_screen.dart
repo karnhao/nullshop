@@ -1,10 +1,13 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:nullshop/services/auth_sesrvice.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -183,6 +186,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> loginHandle({required BuildContext context}) async {
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
@@ -193,13 +198,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ));
 
       try {
-        await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email!, password: password!);
+        await authService.signInWithEmailAndPassword(
+            email: email!, password: password!);
         if (!mounted) return;
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/home', (route) => false);
-      } on FirebaseAuthException catch (e) {
-        log(e.message!);
+      } on Exception catch (e) {
+        log(e.toString());
+        showSnackBar("An error has occurred - ${e.toString()}");
         Navigator.maybePop(context);
       }
     }

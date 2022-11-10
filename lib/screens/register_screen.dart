@@ -1,9 +1,15 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart' as fba;
+import 'package:nullshop/services/auth_sesrvice.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -14,7 +20,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final formKey = GlobalKey<FormState>();
-  String? username, email, phone, password, confirmPassword;
+  String? username, email, phone, password, confirmPassword, address;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   createUsername(),
                   createEmail(),
                   createPhone(),
+                  createAddress(),
                   createPassword(),
                   createConfirmPassword(),
                 ],
@@ -68,11 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 padding: const EdgeInsets.only(top: 10, bottom: 20),
                 child: InkWell(
                     onTap: () {
-                      if (formKey.currentState!.validate()) {
-                        formKey.currentState!.save();
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil('/home', (route) => false);
-                      }
+                      registerHandle(context: context);
                     },
                     child: const MainBtnWidget(
                         colorBtn: kColorsPurple,
@@ -204,6 +207,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ));
   }
 
+  Widget createAddress() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+        child: TextFormField(
+          keyboardType: TextInputType.text,
+          autofocus: false,
+          style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w600,
+              color: kColorsPurple),
+          decoration: inputDecorationWidget(context, 'Address'),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return "Please Enter Address";
+            }
+            return null;
+          },
+          onChanged: (value) {
+            address = value;
+          },
+        ));
+  }
+
   Widget createConfirmPassword() {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
@@ -227,5 +253,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
             confirmPassword = value;
           },
         ));
+  }
+
+  Future<void> registerHandle({required BuildContext context}) async {
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+
+      showDialog(
+          context: context,
+          builder: (context) => const Center(
+                child: CircularProgressIndicator(strokeWidth: 4),
+              ));
+
+      try {
+        await authService.createUser(
+          email: email!,
+          username: username!,
+          password: password!,
+          address: address,
+          coin: 0,
+          phone: phone,
+          role: "role",
+        );
+
+        if (!mounted) return;
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/home', (route) => false);
+      } on fba.FirebaseAuthException catch (e) {
+        log(e.message!);
+        showSnackBar("Failed to authenticate to Firebase Auth - ${e.message}");
+        Navigator.pop(context);
+      }
+    }
   }
 }

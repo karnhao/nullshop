@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nullshop/services/auth_sesrvice.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';

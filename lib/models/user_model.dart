@@ -35,7 +35,7 @@ class User {
         role = userMap["role"],
         phone = userMap["phone"],
         address = userMap["address"],
-        coin = userMap["coin"];
+        coin = double.parse(userMap["coin"].toString());
 
   Map<String, dynamic> toMap() => {
         "uid": uid,

@@ -106,19 +106,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: BoxShape.circle, color: kColorsCream),
               ),
               const SizedBox(width: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hi ${user?.username ?? "Loading..."}',
-                      style: Theme.of(context).textTheme.headline3),
-                  const SizedBox(height: 10),
-                  Text('Email: ${user?.email ?? "Loading..."}',
-                      style: const TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400,
-                          color: kColorsWhite,
-                          fontFamily: 'Inter')),
-                ],
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Hi ${user?.username ?? "Loading..."}',
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: Theme.of(context).textTheme.headline3),
+                    const SizedBox(height: 10),
+                    Text('Email: ${user?.email ?? "Loading..."}',
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: const TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w400,
+                            color: kColorsWhite,
+                            fontFamily: 'Inter')),
+                  ],
+                ),
               )
             ],
           ),

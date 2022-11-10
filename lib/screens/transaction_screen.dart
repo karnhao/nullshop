@@ -1,6 +1,11 @@
+import 'package:nullshop/models/user_model.dart';
+import 'package:nullshop/services/auth_service.dart';
+import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
+import 'package:provider/provider.dart';
 
 class TransactionScreen extends StatefulWidget {
   const TransactionScreen({Key? key}) : super(key: key);
@@ -10,8 +15,15 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
+  User? user;
+
   @override
   Widget build(BuildContext context) {
+    AuthService authService = Provider.of<AuthService>(context, listen: false);
+
+    authService.getCurrentUser().then((value) {
+      user = value;
+    });
     return Scaffold(
       backgroundColor: kColorsCream,
       appBar: AppBar(
@@ -33,7 +45,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   color: kColorsWhite)),
           IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/profile');
+                if (user != null) {
+                  showSnackBar(user?.username ?? "Loading please wait...");
+                }
               },
               icon:
                   SvgPicture.asset('assets/icons/me.svg', color: kColorsWhite))

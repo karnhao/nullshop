@@ -23,4 +23,11 @@ class DatabaseService extends DatabaseServiceInterface {
     final userInfo = snapshot.data();
     return User.fromMap(userMap: userInfo!);
   }
+
+  @override
+  Future<void> updateUserFromUid(
+      {required String uid, required User user}) async {
+    final docUser = _firebaseStore.collection("users").doc(uid);
+    await docUser.set(user.toMap());
+  }
 }

@@ -11,4 +11,9 @@ class TestDatabaseService extends DatabaseServiceInterface {
   Future<User?> getUserFromUid({required String uid}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateUserFromUid({required String uid, required User user}) {
+    throw UnimplementedError();
+  }
 }

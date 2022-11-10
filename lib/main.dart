@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nullshop/route.dart';
-import 'package:nullshop/services/auth_sesrvice.dart';
+import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/services/database_service.dart';
 import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/styles.dart';

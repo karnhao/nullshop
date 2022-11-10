@@ -1,5 +1,5 @@
 import 'package:nullshop/models/user_model.dart';
-import 'package:nullshop/services/auth_sesrvice.dart';
+import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';

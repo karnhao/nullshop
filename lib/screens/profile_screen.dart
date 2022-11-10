@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:nullshop/services/auth_sesrvice.dart';
+import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/coin_menu_widget.dart';
 import 'package:nullshop/widgets/main_btn.dart';
@@ -107,10 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Hi! ${user?.username ?? "NULL"}',
+                  Text('Hi ${user?.username ?? "Loading..."}',
                       style: Theme.of(context).textTheme.headline3),
                   const SizedBox(height: 10),
-                  Text('Email: ${user?.email ?? "Unknown Email"}',
+                  Text('Email: ${user?.email ?? "Loading..."}',
                       style: const TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w400,
@@ -158,7 +158,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text('My Coin',
                             style: Theme.of(context).textTheme.headline4),
-                        Text('\$ ${user?.coin}',
+                        Text('\$ ${user?.coin ?? "Loading..."}',
                             style: Theme.of(context).textTheme.subtitle1),
                       ],
                     ),

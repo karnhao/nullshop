@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +14,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    // final databaseService =
+    //     Provider.of<DatabaseServiceInterface>(context, listen: false);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,

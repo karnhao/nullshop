@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart' as fba;
-import 'package:nullshop/services/auth_sesrvice.dart';
+import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/input_decoration.dart';

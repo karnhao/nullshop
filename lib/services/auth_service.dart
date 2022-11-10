@@ -15,7 +15,7 @@ class AuthService {
           email: email, password: password);
 
       final userUid = userCredential.user?.uid;
-      final user = _databaseService.getUserFromUid(uid: userUid!);
+      final user = await _databaseService.getUserFromUid(uid: userUid!);
       return user;
     } catch (e) {
       throw Exception("Failed to signIn!");

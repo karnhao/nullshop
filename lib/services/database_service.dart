@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nullshop/models/product_model.dart';
 import 'package:nullshop/models/user_model.dart';
 import 'package:nullshop/services/database_service_interface.dart';
 
@@ -8,7 +9,6 @@ class DatabaseService extends DatabaseServiceInterface {
   @override
   Future<void> createUserFromModel({required User user}) async {
     final docUser = _firebaseStore.collection("users").doc(user.uid);
-
     final Map<String, dynamic> userInfo = user.toMap();
     await docUser.set(userInfo);
   }
@@ -29,5 +29,12 @@ class DatabaseService extends DatabaseServiceInterface {
       {required String uid, required User user}) async {
     final docUser = _firebaseStore.collection("users").doc(uid);
     await docUser.set(user.toMap());
+  }
+
+  Future<List<Product?>> getFutureListProduct() async {
+    final snapshot = await _firebaseStore.collection('products').get();
+    return snapshot.docs
+        .map((t) => Product.fromMap(usermap: t.data()))
+        .toList();
   }
 }

@@ -165,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: TextFormField(
+          obscureText: true,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: const TextStyle(
@@ -202,7 +203,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         Navigator.of(context)
             .pushNamedAndRemoveUntil('/home', (route) => false);
-      } on Exception catch (e) {
+      } catch (e) {
         log(e.toString());
         showSnackBar("An error has occurred - ${e.toString()}");
         Navigator.maybePop(context);

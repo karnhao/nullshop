@@ -28,13 +28,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         user = currentUser!;
       });
+    }).catchError((e) {
+      // Close page before download finished.
     });
+
     return Scaffold(
       backgroundColor: kColorsCream,
       appBar: AppBar(
         backgroundColor: kColorsPurple,
         elevation: 0,
         toolbarHeight: 60,
+        title: const Text("Your Profile",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w700)),
         leading: IconButton(
           icon: SvgPicture.asset('assets/icons/back.svg', color: kColorsWhite),
           onPressed: () {
@@ -45,12 +53,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
               onPressed: () {},
               icon: SvgPicture.asset('assets/icons/msg.svg',
-                  color: kColorsWhite)),
-          IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, "/add-product");
-              },
-              icon: SvgPicture.asset("assets/icons/add.svg",
                   color: kColorsWhite)),
         ],
       ),

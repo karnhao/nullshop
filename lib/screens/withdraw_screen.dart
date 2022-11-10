@@ -1,8 +1,13 @@
+import 'package:nullshop/models/user_model.dart';
+import 'package:nullshop/services/auth_service.dart';
+import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/coin_btn_widget.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({Key? key}) : super(key: key);
@@ -12,8 +17,16 @@ class WithdrawScreen extends StatefulWidget {
 }
 
 class _WithdrawScreenState extends State<WithdrawScreen> {
+  int withdrawValue = 0;
+  List<int> amountList = [100, 300, 500, 700, 1000, 2000];
+  User? user;
+
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    authService.getCurrentUser().then((t) {
+      user = t;
+    });
     return Scaffold(
       backgroundColor: kColorsCream,
       appBar: AppBar(
@@ -51,11 +64,48 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           Positioned(
               bottom: 20,
               width: MediaQuery.of(context).size.width,
-              child: const MainBtnWidget(
-                  colorBtn: kColorsRed,
-                  textBtn: 'Withdraw',
-                  isTransparent: true,
-                  haveIcon: false))
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            title: const Text("Withdraw"),
+                            content: Text("Withdraw $withdrawValue coin."),
+                            actionsAlignment: MainAxisAlignment.spaceAround,
+                            actions: <Widget>[
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, "Cancel");
+                                  },
+                                  child: const Text("Cancel")),
+                              TextButton(
+                                  onPressed: () {
+                                    user!.coin = user!.coin! - withdrawValue;
+                                    final databaseService =
+                                        Provider.of<DatabaseServiceInterface>(
+                                            context,
+                                            listen: false);
+                                    databaseService
+                                        .updateUserFromUid(
+                                            uid: user!.uid, user: user!)
+                                        .then((t) {
+                                      showSnackBar("Success",
+                                          backgroundColor: Colors.green);
+                                    }).catchError((e) {
+                                      showSnackBar("Failed $e");
+                                    });
+                                    Navigator.pop(context, "Finish");
+                                  },
+                                  child: const Text("Confirm")),
+                            ],
+                          ));
+                },
+                child: const MainBtnWidget(
+                    colorBtn: kColorsRed,
+                    textBtn: 'Withdraw',
+                    isTransparent: true,
+                    haveIcon: false),
+              ))
         ],
       ),
     );
@@ -117,26 +167,25 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     ),
                     SizedBox(
                       height: 130,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              InkWell(child: CoinBtnWidget(textBtn: '100')),
-                              InkWell(child: CoinBtnWidget(textBtn: '300')),
-                              InkWell(child: CoinBtnWidget(textBtn: '500')),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              InkWell(child: CoinBtnWidget(textBtn: '700')),
-                              InkWell(child: CoinBtnWidget(textBtn: '1000')),
-                              InkWell(child: CoinBtnWidget(textBtn: '2000')),
-                            ],
-                          ),
-                        ],
+                      child: Center(
+                        child: Wrap(
+                          runSpacing: 10.0,
+                          spacing: 30.0,
+                          children: [
+                            ...List.generate(
+                                amountList.length,
+                                (index) => InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          withdrawValue = amountList[index];
+                                        });
+                                      },
+                                      child: CoinBtnWidget(
+                                        textBtn: '${amountList[index]}',
+                                      ),
+                                    ))
+                          ],
+                        ),
                       ),
                     )
                   ],
@@ -165,9 +214,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             children: [
               Text('Input Amount',
                   style: Theme.of(context).textTheme.headline4),
-              const Text(
-                '\$ 300',
-                style: TextStyle(
+              Text(
+                '\$ $withdrawValue',
+                style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.w700,
                     color: kColorsRed),

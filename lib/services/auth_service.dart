@@ -17,8 +17,10 @@ class AuthService {
       final userUid = userCredential.user?.uid;
       final user = await _databaseService.getUserFromUid(uid: userUid!);
       return user;
+    } on auth.FirebaseAuthException catch (e) {
+      throw "${e.message}";
     } catch (e) {
-      throw Exception("Failed to signIn!");
+      throw "$e";
     }
   }
 
@@ -58,6 +60,7 @@ class AuthService {
   }
 
   Future<User?> getCurrentUser() async {
+    if (_firebaseAuth.currentUser == null) return null;
     return await _databaseService.getUserFromUid(
         uid: _firebaseAuth.currentUser!.uid);
   }

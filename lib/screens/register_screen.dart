@@ -188,6 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: TextFormField(
+          obscureText: true,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: const TextStyle(
@@ -234,6 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: TextFormField(
+          obscureText: true,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: const TextStyle(
@@ -283,8 +285,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             .pushNamedAndRemoveUntil('/home', (route) => false);
       } on fba.FirebaseAuthException catch (e) {
         log(e.message!);
-        showSnackBar("Failed to authenticate to Firebase Auth - ${e.message}");
         Navigator.pop(context);
+        showSnackBar("Failed to authenticate to Firebase Auth - ${e.message}");
+      } catch (e) {
+        log('$e');
+        Navigator.pop(context);
+        showSnackBar("Failed to authenticate to Firebase Auth - $e");
       }
     }
   }

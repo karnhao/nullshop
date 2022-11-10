@@ -23,7 +23,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
     authService.getCurrentUser().then((t) {
       user = t;
     });
@@ -93,10 +93,10 @@ class _TopUpScreenState extends State<TopUpScreen> {
                                     showSnackBar('Success',
                                         backgroundColor: Colors.green);
                                   }).catchError((e) {
-                                    showSnackBar("Failed");
+                                    showSnackBar("Failed $e");
                                   });
 
-                                  Navigator.pop(context, "Cancel");
+                                  Navigator.pop(context, "Finish");
                                 },
                                 child: const Text("Confirm"),
                               ),

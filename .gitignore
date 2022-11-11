@@ -10,6 +10,7 @@
 .svn/
 migrate_working_dir/
 .vscode/
+.gitignore
 
 # IntelliJ related
 *.iml
@@ -43,5 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/google-services.json
 
 android/app/google-services.json

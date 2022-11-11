@@ -1,7 +1,9 @@
 # nullshop
 
-NullShop.
+NullShop โดย Null Team.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
+## New Features
+ - ขอบมุมกลมๆของรูปสินค้าในหน้าแรก
+ - การจางข้อความส่วนเกินในกรณีที่ผู้ใช้มี email และ/หรือ ชื่อที่ยาวมาก
+ - animation การเลื่อนหน้าจอแบบใหม่เมื่อสุดขอบ
+ 

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nullshop/models/product_model.dart';
 import 'package:nullshop/themes/colors.dart';
 
 class ProductInfo extends StatefulWidget {
@@ -12,6 +15,8 @@ class ProductInfo extends StatefulWidget {
 class _ProductInfoState extends State<ProductInfo> {
   @override
   Widget build(BuildContext context) {
+    final Product product =
+        ModalRoute.of(context)?.settings.arguments as Product;
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -50,12 +55,14 @@ class _ProductInfoState extends State<ProductInfo> {
       body: ListView(children: [
         AspectRatio(
           aspectRatio: 1,
-          child: Container(
-            decoration: const BoxDecoration(color: kColorsCream),
-            child: Center(
-                child: Text("IMAGE",
-                    style: Theme.of(context).textTheme.headline1)),
-          ),
+          child: product.photoURL == "" || product.photoURL == null
+              ? Container(
+                  decoration: const BoxDecoration(color: kColorsCream),
+                  child: Center(
+                      child: Text("NO IMAGE",
+                          style: Theme.of(context).textTheme.headline1)),
+                )
+              : Image.network(product.photoURL!, fit: BoxFit.cover),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -63,21 +70,21 @@ class _ProductInfoState extends State<ProductInfo> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text("Book", style: Theme.of(context).textTheme.headline4),
+              Text(product.category?.name ?? "UNKNOWN!",
+                  style: Theme.of(context).textTheme.headline4),
               const SizedBox(height: 20),
-              Text("Product name",
-                  style: Theme.of(context).textTheme.headline2),
+              Text(product.name, style: Theme.of(context).textTheme.headline2),
               const SizedBox(height: 20),
-              const Text("\$ Price",
-                  style: TextStyle(
+              Text("\$ ${product.price}",
+                  style: const TextStyle(
                       color: kColorsRed,
                       fontSize: 16,
                       fontWeight: FontWeight.w700)),
               const SizedBox(height: 20),
-              Text("Quantity: 2", style: Theme.of(context).textTheme.subtitle1),
+              Text("Quantity: ${product.quantity}",
+                  style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
-              Text(
-                  "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              Text(product.description ?? "",
                   style: Theme.of(context).textTheme.subtitle1)
             ],
           ),

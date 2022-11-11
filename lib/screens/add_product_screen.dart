@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:nullshop/models/product_model.dart';
+import 'package:nullshop/services/database_service_interface.dart';
+import 'package:nullshop/services/storage_service.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
+import 'package:provider/provider.dart';
 
 class AddProdectScreen extends StatefulWidget {
   const AddProdectScreen({super.key});
@@ -110,9 +115,7 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: InkWell(
                 onTap: () {
-                  if (formKey.currentState!.validate()) {
-                    formKey.currentState!.save();
-                  }
+                  confirmHandle(context: context);
                 },
                 child: const MainBtnWidget(
                   colorBtn: kColorsPurple,
@@ -309,6 +312,42 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
         imageFile = File(pickedFile.path);
       } else {}
     });
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  Future<void> confirmHandle({required BuildContext context}) async {
+    showDialog(
+        context: context,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(strokeWidth: 4),
+            ));
+
+    final databaseService =
+        Provider.of<DatabaseServiceInterface>(context, listen: false);
+
+    final storageService = Provider.of<StorageService>(context, listen: false);
+
+    if (!formKey.currentState!.validate()) return;
+    formKey.currentState!.save();
+
+    String? url;
+
+    if (imageFile != null) {
+      url = await storageService.uploadProductImage(imageFile: imageFile!);
+    }
+    final product = Product(
+        name: productName!,
+        price: double.parse(productPrice!),
+        quantity: int.parse(productQuantity!),
+        category: Product.getProductCategory(productCategory!),
+        description: productDescription,
+        photoURL: url);
+    await databaseService.addProduct(product: product);
+
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    showSnackBar("Add product successful", backgroundColor: Colors.green);
     if (!mounted) return;
     Navigator.of(context).pop();
   }

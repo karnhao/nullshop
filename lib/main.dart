@@ -4,6 +4,7 @@ import 'package:nullshop/route.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/services/database_service.dart';
 import 'package:nullshop/services/database_service_interface.dart';
+import 'package:nullshop/services/storage_service.dart';
 import 'package:nullshop/themes/styles.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
       providers: [
         Provider<DatabaseServiceInterface>(
             create: (context) => DatabaseService()),
+        Provider<StorageService>(create: ((context) => StorageService())),
         ProxyProvider<DatabaseServiceInterface, AuthService>(
           update: (context, value, previous) => AuthService(dbs: value),
         )

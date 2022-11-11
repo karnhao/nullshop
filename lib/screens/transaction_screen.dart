@@ -1,6 +1,5 @@
 import 'package:nullshop/models/user_model.dart';
 import 'package:nullshop/services/auth_service.dart';
-import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

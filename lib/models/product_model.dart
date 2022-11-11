@@ -1,4 +1,4 @@
-enum ProductCategory { pen, book, eraser, gun }
+enum ProductCategory { pen, book, eraser, gun, other }
 
 class Product {
   final String? uid;
@@ -18,20 +18,20 @@ class Product {
       required this.quantity,
       this.category});
 
-  Product.fromMap({required Map<String, dynamic> usermap})
-      : uid = usermap["uid"],
-        description = usermap["description"],
-        category = usermap["category"],
-        price = usermap["price"],
-        quantity = usermap["quantity"],
-        name = usermap["name"],
-        photoURL = usermap["photoURL"];
+  Product.fromMap({required Map<String, dynamic> productMap})
+      : uid = productMap["uid"],
+        description = productMap["description"],
+        category = getProductCategory(productMap["category"]),
+        price = double.parse(productMap["price"].toString()),
+        quantity = int.parse(productMap["quantity"].toString()).floor(),
+        name = productMap["name"],
+        photoURL = productMap["photoURL"];
 
   Map<String, dynamic> toMap() => {
         "uid": uid ?? "",
         "name": name,
         "description": description ?? "NO DESCRIPTION",
-        "category": category ?? "book",
+        "category": category?.name.toString() ?? "book",
         "price": price,
         "quantity": quantity,
         "photoURL": photoURL ?? "",
@@ -48,6 +48,6 @@ class Product {
       case "gun":
         return ProductCategory.gun;
     }
-    return null;
+    return ProductCategory.other;
   }
 }

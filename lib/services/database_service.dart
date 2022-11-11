@@ -31,10 +31,36 @@ class DatabaseService extends DatabaseServiceInterface {
     await docUser.set(user.toMap());
   }
 
+  @override
   Future<List<Product?>> getFutureListProduct() async {
-    final snapshot = await _firebaseStore.collection('products').get();
+    final snapshot = await _firebaseStore.collection("products").get();
     return snapshot.docs
-        .map((t) => Product.fromMap(usermap: t.data()))
+        .map((t) => Product.fromMap(productMap: t.data()))
         .toList();
+  }
+
+  @override
+  Future<void> createProduct({required Product product}) async {
+    final docs = _firebaseStore.collection("products").doc(product.uid);
+    await docs.set(product.toMap());
+  }
+
+  @override
+  Stream<List<Product?>> getStreamListProduct() =>
+      _firebaseStore.collection('products').snapshots().map((t) =>
+          t.docs.map((u) => Product.fromMap(productMap: u.data())).toList());
+
+  @override
+  Future<void> addProduct({required Product product}) async {
+    final docProduct = _firebaseStore.collection('products').doc();
+    final newProduct = Product(
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity,
+        category: product.category,
+        description: product.description,
+        photoURL: product.photoURL,
+        uid: docProduct.id);
+    await docProduct.set(newProduct.toMap());
   }
 }

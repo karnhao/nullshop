@@ -12,7 +12,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   ErrorWidget.builder = ((details) {
-    return Text('ERROR : ${details.exception}',
+    return Text('ERROR! : ${details.exception}',
         style: const TextStyle(
             color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 20));
   });

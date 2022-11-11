@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nullshop/models/product_model.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/show_snack_bar.dart';
+import 'package:nullshop/widgets/main_btn.dart';
 
 class ProductInfo extends StatefulWidget {
   const ProductInfo({super.key});
@@ -83,7 +85,22 @@ class _ProductInfoState extends State<ProductInfo> {
                   style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
               Text(product.description ?? "",
-                  style: Theme.of(context).textTheme.subtitle1)
+                  style: Theme.of(context).textTheme.subtitle1),
+              const SizedBox(height: 20),
+              InkWell(
+                onTap: () {
+                  showSnackBar(
+                      "Database Service not available. Please wait for future updates.");
+                },
+                child: const MainBtnWidget(
+                    colorBtn: Colors.green,
+                    textBtn: "Buy",
+                    isTransparent: false,
+                    haveIcon: false),
+              ),
+              const SizedBox(
+                height: 20,
+              )
             ],
           ),
         )

@@ -25,7 +25,7 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
   final picker = ImagePicker();
 
   final formKey = GlobalKey<FormState>();
-  String? productCategory = "Pen",
+  String? productCategory = "pen",
       productName,
       productPrice,
       productQuantity,
@@ -221,14 +221,8 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
   }
 
   Widget createProductCategory() {
-    List<String> category = [
-      'Pen',
-      'Book',
-      'Paper',
-      'Eraser',
-      'Marker',
-      'Folder'
-    ];
+    List<String> category =
+        ProductCategory.values.map((t) => t.name.toString()).toList();
     return Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
         child: InputDecorator(

@@ -215,9 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+    GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
 
-    _googleSignIn.signIn();
+    googleSignIn.signIn();
   }
 }

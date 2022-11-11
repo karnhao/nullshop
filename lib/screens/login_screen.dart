@@ -226,6 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
         showSnackBar("ERROR: Account is null");
         return;
       }
+      showSnackBar("Coming soon...");
       log(account.email);
     } catch (e) {
       showSnackBar(

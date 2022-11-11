@@ -215,9 +215,21 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(
-        scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+    try {
+      GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly'
+      ]);
 
-    googleSignIn.signIn();
+      final account = await googleSignIn.signIn();
+      if (account == null) {
+        showSnackBar("ERROR: Account is null");
+        return;
+      }
+      log(account.email);
+    } catch (e) {
+      showSnackBar(
+          "This device cannot be signed with google! try using newer api version.");
+    }
   }
 }

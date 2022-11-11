@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
@@ -98,7 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ]),
                   ),
                   InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        googleLoginHandle(context: context);
+                      },
                       child: const MainBtnWidget(
                           colorBtn: kColorsPurple,
                           textBtn: 'Login with Google',
@@ -209,5 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.maybePop(context);
       }
     }
+  }
+
+  Future<void> googleLoginHandle({required BuildContext context}) async {
+    GoogleSignIn _googleSignIn = GoogleSignIn(scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ]);
+
+    _googleSignIn.signIn();
   }
 }

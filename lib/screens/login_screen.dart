@@ -99,7 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ]),
                   ),
                   InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        googleLoginHandle(context: context);
+                      },
                       child: const MainBtnWidget(
                           colorBtn: kColorsPurple,
                           textBtn: 'Login with Google',
@@ -213,6 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    await GoogleSignIn().signIn();
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+        scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+
+    _googleSignIn.signIn();
   }
 }

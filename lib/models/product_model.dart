@@ -1,4 +1,14 @@
-enum ProductCategory { pen, book, eraser, gun, other }
+enum ProductCategory {
+  pen,
+  book,
+  eraser,
+  food,
+  drink,
+  gun,
+  nuke,
+  deathStar,
+  other
+}
 
 class Product {
   final String? uid;

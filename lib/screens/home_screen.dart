@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseServiceInterface>(context, listen: false);
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -37,39 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  SizedBox(
-                    width: 100,
-                    child: Center(
-                      child: Text("Books",
-                          style: Theme.of(context).textTheme.subtitle1),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: Center(
-                      child: Text("Guns",
-                          style: Theme.of(context).textTheme.subtitle1),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: Center(
-                      child: Text("Bombs",
-                          style: Theme.of(context).textTheme.subtitle1),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: Center(
-                      child: Text("Nukes",
-                          style: Theme.of(context).textTheme.subtitle1),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: Center(
-                      child: Text("Death Star",
-                          style: Theme.of(context).textTheme.subtitle1),
+                  ...ProductCategory.values.map(
+                    (t) => SizedBox(
+                      width: 100,
+                      child: Center(
+                        child: Text(t.name,
+                            style: Theme.of(context).textTheme.subtitle1),
+                      ),
                     ),
                   ),
                 ],

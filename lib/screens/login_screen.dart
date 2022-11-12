@@ -71,15 +71,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               textBtn: 'Login',
                               isTransparent: false,
                               haveIcon: false))),
-                  const Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Text('Forgot Password?',
-                          style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w600,
-                              color: kColorsPurple)),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/resetpassword");
+                    },
+                    child: const Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 40),
+                        child: Text('Forgot Password?',
+                            style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                                color: kColorsPurple)),
+                      ),
                     ),
                   ),
                   Padding(

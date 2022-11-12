@@ -5,6 +5,7 @@ import 'package:nullshop/screens/login_screen.dart';
 import 'package:nullshop/screens/product_info.dart';
 import 'package:nullshop/screens/profile_screen.dart';
 import 'package:nullshop/screens/register_screen.dart';
+import 'package:nullshop/screens/reset_password_screen.dart';
 import 'package:nullshop/screens/top_up_screen.dart';
 import 'package:nullshop/screens/transaction_screen.dart';
 import 'package:nullshop/screens/withdraw_screen.dart';
@@ -19,4 +20,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   "/transaction": (BuildContext context) => const TransactionScreen(),
   "/login": (BuildContext context) => const LoginScreen(),
   "/register": (BuildContext context) => const RegisterScreen(),
+  "/resetpassword": (BuildContext context) => const ResetPassword(),
 };

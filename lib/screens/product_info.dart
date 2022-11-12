@@ -13,6 +13,7 @@ class ProductInfo extends StatefulWidget {
 }
 
 class _ProductInfoState extends State<ProductInfo> {
+  int amount = 0;
   @override
   Widget build(BuildContext context) {
     final Product product =
@@ -87,37 +88,37 @@ class _ProductInfoState extends State<ProductInfo> {
               Text(product.description ?? "",
                   style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                RawMaterialButton(
-                  onPressed: () {},
-                  elevation: 2.0,
-                  fillColor: kColorsCream,
-                  padding: EdgeInsets.all(2),
-                  shape: CircleBorder(),
-                  child: Icon(
-                    Icons.remove,
-                    color: Colors.red,
+              Container(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RawMaterialButton(
+                      shape: CircleBorder(),
+                      onPressed: () {
+                        removeAmountValue();
+                      },
+                      child: Icon(
+                        Icons.remove,
+                        color: Colors.red,
+                      )),
+                  Container(
+                    child: Text("$amount",
+                        style: TextStyle(
+                            color: kColorsPurple,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25)),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(1.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: '0'),
-                  ),
-                ),
-                RawMaterialButton(
-                  onPressed: () {},
-                  elevation: 2.0,
-                  fillColor: kColorsCream,
-                  padding: EdgeInsets.all(2),
-                  shape: CircleBorder(),
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.green,
-                  ),
-                )
-              ]),
+                  RawMaterialButton(
+                      shape: CircleBorder(),
+                      onPressed: () {
+                        addAmountValue();
+                      },
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.green,
+                      )),
+                ],
+              )),
               InkWell(
                 onTap: () {
                   showSnackBar(
@@ -137,5 +138,23 @@ class _ProductInfoState extends State<ProductInfo> {
         )
       ]),
     );
+  }
+
+  void addAmountValue() {
+    //ฝากเช็คหน่อยว่ามันเกินจำนวนที่อยู่ใน Database ไหม
+    Product product = ModalRoute.of(context)?.settings.arguments as Product;
+
+    if (amount >= product.quantity) return;
+    setState(() {
+      amount++;
+    });
+  }
+
+  void removeAmountValue() {
+    if (amount <= 0) return;
+
+    setState(() {
+      amount--;
+    });
   }
 }

@@ -88,37 +88,34 @@ class _ProductInfoState extends State<ProductInfo> {
               Text(product.description ?? "",
                   style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
-              Container(
-                  child: Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   RawMaterialButton(
-                      shape: CircleBorder(),
+                      shape: const CircleBorder(),
                       onPressed: () {
                         removeAmountValue();
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.remove,
                         color: Colors.red,
                       )),
-                  Container(
-                    child: Text("$amount",
-                        style: TextStyle(
-                            color: kColorsPurple,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 25)),
-                  ),
+                  Text("$amount",
+                      style: const TextStyle(
+                          color: kColorsPurple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25)),
                   RawMaterialButton(
-                      shape: CircleBorder(),
+                      shape: const CircleBorder(),
                       onPressed: () {
                         addAmountValue();
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.add,
                         color: Colors.green,
                       )),
                 ],
-              )),
+              ),
               InkWell(
                 onTap: () {
                   showSnackBar(

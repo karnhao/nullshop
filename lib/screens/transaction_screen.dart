@@ -1,5 +1,7 @@
+import 'package:nullshop/models/transaction_model.dart';
 import 'package:nullshop/models/user_model.dart';
 import 'package:nullshop/services/auth_service.dart';
+import 'package:nullshop/services/transaction_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,15 +17,33 @@ class TransactionScreen extends StatefulWidget {
 
 class _TransactionScreenState extends State<TransactionScreen> {
   User? user;
-  List<int> items = [1, 2, 3, 4, 5, 6, 4, 7, 5, 9, 5, 5, 8, 4, 2, 56, 98];
+  List<TransactionObject> transactions = [];
+  bool flag = false;
 
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of<AuthService>(context, listen: false);
 
-    authService.getCurrentUser().then((value) {
-      user = value;
-    });
+    if (!flag) {
+      authService.getCurrentUser().then((value) {
+        user = value;
+        final transactionService =
+            Provider.of<TransactionServiceInterface>(context, listen: false);
+        transactionService.get("test").then((value) {
+          setState(() {
+            value!.items.clear();
+            value.items.add(TransactionObject(
+                productName: "VsCode Stable",
+                productPrice: 1000,
+                productCount: 2));
+            transactionService.update("test", value);
+            transactions = value.items;
+            flag = true;
+          });
+        });
+      });
+    }
+
     return Scaffold(
       backgroundColor: kColorsCream,
       appBar: AppBar(
@@ -103,7 +123,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Container(
-                          height: 1.5,
+                          height: 2,
                           width: MediaQuery.of(context).size.width,
                           decoration: const BoxDecoration(color: kColorsCream),
                         ),
@@ -117,53 +137,59 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         height: MediaQuery.of(context).size.height * 0.67,
                         child: ListView.builder(
                             scrollDirection: Axis.vertical,
-                            itemCount: items.length,
+                            itemCount: transactions.length,
                             itemBuilder: ((context, index) {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 30, horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    //image
-                                    Container(
-                                      width: 60,
-                                      height: 60,
-                                      color: Colors.purple,
-                                      // child: const Text("Hell"),
-                                    ),
-                                    //name
-                                    Container(
-                                      child: const Text(
-                                        "Name",
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: kColorsPurple),
+                                    vertical: 9, horizontal: 7),
+                                child: Container(
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                      color: kColorsCream,
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Stack(
+                                    children: [
+                                      // Name Product
+                                      Positioned(
+                                        bottom: 20,
+                                        height: 65,
+                                        left: 20,
+                                        child: Text(
+                                          transactions[index].productName,
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                              color: kColorsPurple),
+                                        ),
                                       ),
-                                    ),
-                                    //Quantity
-                                    Container(
-                                      child: const Text(
-                                        "Quantity",
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: kColorsPurple),
+                                      //Quantity Product
+                                      Positioned(
+                                        bottom: 20,
+                                        height: 65,
+                                        right: 20,
+                                        child: Text(
+                                          "×${transactions[index].productCount}",
+                                          style: const TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: kColorsGrey),
+                                        ),
                                       ),
-                                    ),
-                                    //Price
-                                    Container(
-                                      child: const Text(
-                                        "Price",
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600,
-                                            color: kColorsPurple),
-                                      ),
-                                    )
-                                  ],
+                                      //Price Product
+                                      Positioned(
+                                        bottom: 20,
+                                        right: 20,
+                                        child: Text(
+                                          "฿${transactions[index].productPrice.toString()}",
+                                          style: const TextStyle(
+                                              letterSpacing: 0.7,
+                                              fontSize: 21,
+                                              fontWeight: FontWeight.w800,
+                                              color: kColorsRed),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             })),

@@ -25,10 +25,19 @@ class _ProductInfoState extends State<ProductInfo> {
             style: Theme.of(context).textTheme.headline3,
           ),
           shape:
-              const Border(bottom: BorderSide(color: kColorsGrey, width: 1.5)),
+              const Border(bottom: BorderSide(color: kColorsGrey, width: 0.5)),
           elevation: 0,
           toolbarHeight: 60,
           backgroundColor: kColorsPurple,
+          leading: IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/back.svg",
+              color: kColorsWhite,
+            ),
+            onPressed: () {
+              Navigator.pop(context, "/home");
+            },
+          ),
           actions: [
             IconButton(
                 onPressed: () {

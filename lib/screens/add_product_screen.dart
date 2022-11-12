@@ -69,63 +69,66 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
           FocusScope.of(context).unfocus();
         }),
         hoverColor: Colors.white,
-        child: ListView(
-          children: [
-            Form(
-              key: formKey,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: InkWell(
-                          onTap: (() {
-                            showButtomSheet(context);
-                          }),
-                          child: (imageFile != null)
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(15),
-                                  child: Image.file(imageFile!,
-                                      width: 153,
-                                      height: 153,
-                                      fit: BoxFit.cover),
-                                )
-                              : Container(
-                                  width: 153,
-                                  height: 153,
-                                  decoration: const BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(15)),
-                                      color: kColorsRed),
-                                  child: Center(
-                                      child: Text("Add image",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle1)),
-                                )),
-                    ),
-                    createProductCategory(),
-                    createProductName(),
-                    createProductPrice(),
-                    createProductQuantity(),
-                    createProductDescription()
-                  ]),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: InkWell(
-                onTap: () {
-                  confirmHandle(context: context);
-                },
-                child: const MainBtnWidget(
-                  colorBtn: kColorsPurple,
-                  textBtn: "Confirm",
-                  haveIcon: false,
-                  isTransparent: false,
-                ),
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.white),
+          child: ListView(
+            children: [
+              Form(
+                key: formKey,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: InkWell(
+                            onTap: (() {
+                              showButtomSheet(context);
+                            }),
+                            child: (imageFile != null)
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.file(imageFile!,
+                                        width: 153,
+                                        height: 153,
+                                        fit: BoxFit.cover),
+                                  )
+                                : Container(
+                                    width: 153,
+                                    height: 153,
+                                    decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                        color: kColorsRed),
+                                    child: Center(
+                                        child: Text("Add image",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subtitle1)),
+                                  )),
+                      ),
+                      createProductCategory(),
+                      createProductName(),
+                      createProductPrice(),
+                      createProductQuantity(),
+                      createProductDescription()
+                    ]),
               ),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: InkWell(
+                  onTap: () {
+                    confirmHandle(context: context);
+                  },
+                  child: const MainBtnWidget(
+                    colorBtn: kColorsPurple,
+                    textBtn: "Confirm",
+                    haveIcon: false,
+                    isTransparent: false,
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

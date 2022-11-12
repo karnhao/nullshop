@@ -71,8 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(6.0),
-          child: StreamBuilder<List<Product?>>(
-            stream: databaseService.getStreamListProduct(),
+          child: FutureBuilder<List<Product?>>(
+            future: databaseService.getFutureListProduct(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 log("${snapshot.error}");

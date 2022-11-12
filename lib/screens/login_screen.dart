@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
@@ -221,50 +220,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    // GoogleSignIn _googleSignIn = GoogleSignIn(
-    //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly'
       ]).signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+      if (googleUser == null) {
+        showSnackBar("Failed to sign in with Google.");
+        return;
+      }
+      final result = await authService.signInWithGoogle(googleUser: googleUser);
+      bool firstTimeSignIn = result["firstTimeSignIn"];
 
-      // ########### เดี๋ยวโค๊ดส่วนการ signIn ตรงนี้ให้ไปทำที่ Service นะ ######################
-      final UserCredential googleUserCredential =
-          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      showSnackBar("Sign in successful", backgroundColor: Colors.green);
+
+      if (firstTimeSignIn) {
+        if (!mounted) return;
+        await Navigator.of(context)
+            .pushNamedAndRemoveUntil("/google-account", (rount) => false);
+        return;
+      }
+      log((await authService.getCurrentUser())?.email ?? "NULL USER");
       if (!mounted) return;
-
       Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-      // ##############################################################################
     } catch (error) {
       showSnackBar(
-          "This device cannot be signed with google! try using newer api version.");
+          "This device cannot be signed with google! try using newer api version. $error");
     }
-    //try {
-    //  GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
-    //    'email',
-    //    'https://www.googleapis.com/auth/contacts.readonly'
-    //  ]);
-
-    //  final account = await googleSignIn.signIn();
-    //  if (account == null) {
-    //    showSnackBar("ERROR: Account is null");
-    //    return;
-    //  }
-    //  showSnackBar("Coming soon...");
-    //  log(account.email);
-    //} catch (e) {
-    //  showSnackBar(
-    //      "This device cannot be signed with google! try using newer api version.");
-    //}
-
-    //Firstime #########################################
-    //Navigator.pushNamed(context, "/google-account");
   }
 }

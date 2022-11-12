@@ -111,7 +111,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       // TO DO: Create transaction
                       Container(
                         decoration: BoxDecoration(
-                            color: kColorsPurple,
+                            color: kColorsWhite,
                             borderRadius: BorderRadius.circular(15)),
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height * 0.67,
@@ -119,7 +119,53 @@ class _TransactionScreenState extends State<TransactionScreen> {
                             scrollDirection: Axis.vertical,
                             itemCount: items.length,
                             itemBuilder: ((context, index) {
-                              return Text(items[index].toString());
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 30, horizontal: 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    //image
+                                    Container(
+                                      width: 60,
+                                      height: 60,
+                                      color: Colors.purple,
+                                      // child: const Text("Hell"),
+                                    ),
+                                    //name
+                                    Container(
+                                      child: const Text(
+                                        "Name",
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: kColorsPurple),
+                                      ),
+                                    ),
+                                    //Quantity
+                                    Container(
+                                      child: const Text(
+                                        "Quantity",
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: kColorsPurple),
+                                      ),
+                                    ),
+                                    //Price
+                                    Container(
+                                      child: const Text(
+                                        "Price",
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: kColorsPurple),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
                             })),
                       )
                     ],

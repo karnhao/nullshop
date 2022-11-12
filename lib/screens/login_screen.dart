@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nullshop/screens/google_account_signin.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
@@ -10,7 +9,6 @@ import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nullshop/route.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -225,21 +223,28 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> googleLoginHandle({required BuildContext context}) async {
     // GoogleSignIn _googleSignIn = GoogleSignIn(
     //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
-
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
     try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly'
+      ]).signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // ########### เดี๋ยวโค๊ดส่วนการ signIn ตรงนี้ให้ไปทำที่ Service นะ ######################
       final UserCredential googleUserCredential =
           await FirebaseAuth.instance.signInWithCredential(googleCredential);
-
       if (!mounted) return;
       Navigator.pushNamed(context, "/google-account");
-    } catch (error) {}
+      // ##############################################################################
+    } catch (error) {
+      showSnackBar(
+          "This device cannot be signed with google! try using newer api version.");
+    }
     //try {
     //  GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
     //    'email',

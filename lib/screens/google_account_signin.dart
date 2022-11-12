@@ -1,27 +1,22 @@
-import 'dart:developer';
-
-import 'package:firebase_auth/firebase_auth.dart' as fba;
-import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
-import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 
-class Google_account_signin extends StatefulWidget {
-  const Google_account_signin({super.key});
+class GoogleAccountSignIn extends StatefulWidget {
+  const GoogleAccountSignIn({super.key});
 
   @override
-  State<Google_account_signin> createState() => _Google_account_signinState();
+  State<GoogleAccountSignIn> createState() => _GoogleAccountSignInState();
 }
 
-class _Google_account_signinState extends State<Google_account_signin> {
-  @override
+class _GoogleAccountSignInState extends State<GoogleAccountSignIn> {
   final formKey = GlobalKey<FormState>();
   String? phone, address;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kColorsPurple,

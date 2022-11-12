@@ -1,9 +1,12 @@
+import 'package:nullshop/models/user_model.dart';
+import 'package:nullshop/services/auth_service.dart';
+import 'package:nullshop/services/database_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class GoogleAccountSignIn extends StatefulWidget {
   const GoogleAccountSignIn({super.key});
@@ -28,12 +31,6 @@ class _GoogleAccountSignInState extends State<GoogleAccountSignIn> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         toolbarHeight: 60,
-        leading: IconButton(
-          icon: SvgPicture.asset('assets/icons/back.svg', color: kColorsWhite),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
       ),
       body: InkWell(
         onTap: () {
@@ -127,5 +124,22 @@ class _GoogleAccountSignInState extends State<GoogleAccountSignIn> {
         ));
   }
 
-  Future<void> registerHandle({required BuildContext context}) async {}
+  Future<void> registerHandle({required BuildContext context}) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final databaseService =
+        Provider.of<DatabaseServiceInterface>(context, listen: false);
+    final user = await authService.getCurrentUser();
+    databaseService.updateUserFromUid(
+        uid: user!.uid,
+        user: User(
+            uid: user.uid,
+            email: user.email,
+            username: user.username,
+            address: address,
+            coin: user.coin,
+            phone: phone,
+            role: user.role));
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+  }
 }

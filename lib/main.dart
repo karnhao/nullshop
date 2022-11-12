@@ -41,7 +41,7 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: appTheme(),
         routes: routes,
-        initialRoute: "/login",
+        initialRoute: "/transaction",
       ),
     );
   }

@@ -15,6 +15,7 @@ class TransactionScreen extends StatefulWidget {
 
 class _TransactionScreenState extends State<TransactionScreen> {
   User? user;
+  List<int> items = [1, 2, 3, 4, 5, 6, 4, 7, 5, 9, 5, 5, 8, 4, 2, 56, 98];
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +109,19 @@ class _TransactionScreenState extends State<TransactionScreen> {
                         ),
                       ),
                       // TO DO: Create transaction
+                      Container(
+                        decoration: BoxDecoration(
+                            color: kColorsPurple,
+                            borderRadius: BorderRadius.circular(15)),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.67,
+                        child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: items.length,
+                            itemBuilder: ((context, index) {
+                              return Text(items[index].toString());
+                            })),
+                      )
                     ],
                   ),
                 ),

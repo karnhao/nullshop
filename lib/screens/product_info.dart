@@ -87,6 +87,37 @@ class _ProductInfoState extends State<ProductInfo> {
               Text(product.description ?? "",
                   style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                RawMaterialButton(
+                  onPressed: () {},
+                  elevation: 2.0,
+                  fillColor: kColorsCream,
+                  padding: EdgeInsets.all(2),
+                  shape: CircleBorder(),
+                  child: Icon(
+                    Icons.remove,
+                    color: Colors.red,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(), hintText: '0'),
+                  ),
+                ),
+                RawMaterialButton(
+                  onPressed: () {},
+                  elevation: 2.0,
+                  fillColor: kColorsCream,
+                  padding: EdgeInsets.all(2),
+                  shape: CircleBorder(),
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.green,
+                  ),
+                )
+              ]),
               InkWell(
                 onTap: () {
                   showSnackBar(

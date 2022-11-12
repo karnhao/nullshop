@@ -120,6 +120,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                           "assets/placeholderimage.png",
                                       image: imageUrl,
                                       fit: BoxFit.cover,
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        height: 180,
+                                        color: kColorsRed,
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(left: 8.0),
+                                          child: Center(
+                                            child: Text(
+                                                "Image not available! Maybe max quota of firebase. Please report this to administrator."),
+                                          ),
+                                        ),
+                                      ),
                                     )),
                           ),
                           const SizedBox(

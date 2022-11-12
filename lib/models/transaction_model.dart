@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 class TransactionObject {
   String? collectionUID;
   String? time;

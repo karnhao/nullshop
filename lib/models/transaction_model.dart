@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class TransactionObject {
   String? collectionUID;
   String? time;
@@ -22,15 +24,22 @@ class TransactionCollection {
   static TransactionCollection fromMap(
       Map<String, dynamic> transactionCollectionMap) {
     final List<Map<String, dynamic>> l =
-        transactionCollectionMap["items"] ?? [];
+        (transactionCollectionMap["items"] as List<dynamic>).map((t) {
+      return {
+        "name": t["name"],
+        "price": t["price"],
+        "count": t["count"],
+        "time": t["time"]
+      };
+    }).toList();
 
     return TransactionCollection(
         uid: transactionCollectionMap["uid"],
         items: l
             .map((t) => TransactionObject(
                 productName: t["name"],
-                productPrice: t["price"],
-                productCount: t["count"],
+                productPrice: double.parse(t["price"].toString()),
+                productCount: int.parse(t["count"].toString()),
                 time: t["time"]))
             .toList());
   }

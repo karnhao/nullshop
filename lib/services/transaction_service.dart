@@ -13,7 +13,7 @@ class TranSactionService extends TransactionServiceInterface {
   Future<TransactionCollection?> get(String uid) async {
     final data =
         (await _firebaseStore.collection('transactions').doc(uid).get()).data();
-    if (data == null) return null;
+    if (data == null) return TransactionCollection(uid: uid, items: []);
     return TransactionCollection.fromMap(data);
   }
 }

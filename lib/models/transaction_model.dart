@@ -1,6 +1,7 @@
 class TransactionObject {
   String? collectionUID;
   String? time;
+  int? timeMillis;
   final String productName;
   final double productPrice;
   final int productCount;
@@ -10,7 +11,8 @@ class TransactionObject {
       required this.productPrice,
       required this.productCount,
       this.time,
-      this.collectionUID});
+      this.collectionUID,
+      this.timeMillis});
 }
 
 class TransactionCollection {
@@ -27,7 +29,8 @@ class TransactionCollection {
         "name": t["name"],
         "price": t["price"],
         "count": t["count"],
-        "time": t["time"]
+        "time": t["time"],
+        "timeMillis": t["timeMillis"]
       };
     }).toList();
 
@@ -38,7 +41,8 @@ class TransactionCollection {
                 productName: t["name"],
                 productPrice: double.parse(t["price"].toString()),
                 productCount: int.parse(t["count"].toString()),
-                time: t["time"]))
+                time: t["time"],
+                timeMillis: t["timeMillis"]))
             .toList());
   }
 
@@ -50,7 +54,8 @@ class TransactionCollection {
           "name": t.productName,
           "price": t.productPrice,
           "count": t.productCount,
-          "time": t.time
+          "time": t.time,
+          "timeMillis": t.timeMillis
         };
       }).toList()
     };

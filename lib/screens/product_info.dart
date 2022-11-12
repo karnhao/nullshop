@@ -13,6 +13,7 @@ class ProductInfo extends StatefulWidget {
 }
 
 class _ProductInfoState extends State<ProductInfo> {
+  int amount = 0;
   @override
   Widget build(BuildContext context) {
     final Product product =
@@ -101,6 +102,34 @@ class _ProductInfoState extends State<ProductInfo> {
               Text(product.description ?? "",
                   style: Theme.of(context).textTheme.subtitle1),
               const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RawMaterialButton(
+                      shape: const CircleBorder(),
+                      onPressed: () {
+                        removeAmountValue();
+                      },
+                      child: const Icon(
+                        Icons.remove,
+                        color: Colors.red,
+                      )),
+                  Text("$amount",
+                      style: const TextStyle(
+                          color: kColorsPurple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25)),
+                  RawMaterialButton(
+                      shape: const CircleBorder(),
+                      onPressed: () {
+                        addAmountValue();
+                      },
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.green,
+                      )),
+                ],
+              ),
               InkWell(
                 onTap: () {
                   showSnackBar(
@@ -120,5 +149,23 @@ class _ProductInfoState extends State<ProductInfo> {
         )
       ]),
     );
+  }
+
+  void addAmountValue() {
+    //ฝากเช็คหน่อยว่ามันเกินจำนวนที่อยู่ใน Database ไหม
+    Product product = ModalRoute.of(context)?.settings.arguments as Product;
+
+    if (amount >= product.quantity) return;
+    setState(() {
+      amount++;
+    });
+  }
+
+  void removeAmountValue() {
+    if (amount <= 0) return;
+
+    setState(() {
+      amount--;
+    });
   }
 }

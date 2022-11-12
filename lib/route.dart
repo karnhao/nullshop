@@ -6,6 +6,7 @@ import 'package:nullshop/screens/login_screen.dart';
 import 'package:nullshop/screens/product_info.dart';
 import 'package:nullshop/screens/profile_screen.dart';
 import 'package:nullshop/screens/register_screen.dart';
+import 'package:nullshop/screens/reset_password_screen.dart';
 import 'package:nullshop/screens/top_up_screen.dart';
 import 'package:nullshop/screens/transaction_screen.dart';
 import 'package:nullshop/screens/withdraw_screen.dart';
@@ -21,4 +22,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   "/login": (BuildContext context) => const LoginScreen(),
   "/register": (BuildContext context) => const RegisterScreen(),
   "/google-account": (BuildContext context) => const Google_account_signin(),
+  "/resetpassword": (BuildContext context) => const ResetPassword(),
 };

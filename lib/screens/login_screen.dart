@@ -74,15 +74,20 @@ class _LoginScreenState extends State<LoginScreen> {
                               textBtn: 'Login',
                               isTransparent: false,
                               haveIcon: false))),
-                  const Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 40),
-                      child: Text('Forgot Password?',
-                          style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w600,
-                              color: kColorsPurple)),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/resetpassword");
+                    },
+                    child: const Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 40),
+                        child: Text('Forgot Password?',
+                            style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w600,
+                                color: kColorsPurple)),
+                      ),
                     ),
                   ),
                   Padding(
@@ -235,5 +240,22 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       Navigator.pushNamed(context, "/google-account");
     } catch (error) {}
+    //try {
+    //  GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
+    //    'email',
+    //    'https://www.googleapis.com/auth/contacts.readonly'
+    //  ]);
+
+    //  final account = await googleSignIn.signIn();
+    //  if (account == null) {
+    //    showSnackBar("ERROR: Account is null");
+    //    return;
+    //  }
+    //  showSnackBar("Coming soon...");
+    //  log(account.email);
+    //} catch (e) {
+    //  showSnackBar(
+    //      "This device cannot be signed with google! try using newer api version.");
+    //}
   }
 }

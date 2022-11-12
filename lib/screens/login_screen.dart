@@ -239,7 +239,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final UserCredential googleUserCredential =
           await FirebaseAuth.instance.signInWithCredential(googleCredential);
       if (!mounted) return;
-      Navigator.pushNamed(context, "/google-account");
+
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
       // ##############################################################################
     } catch (error) {
       showSnackBar(
@@ -262,5 +263,8 @@ class _LoginScreenState extends State<LoginScreen> {
     //  showSnackBar(
     //      "This device cannot be signed with google! try using newer api version.");
     //}
+
+    //Firstime #########################################
+    //Navigator.pushNamed(context, "/google-account");
   }
 }

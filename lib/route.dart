@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nullshop/screens/add_product_screen.dart';
+import 'package:nullshop/screens/google_account_signin.dart';
 import 'package:nullshop/screens/home_screen.dart';
 import 'package:nullshop/screens/login_screen.dart';
 import 'package:nullshop/screens/product_info.dart';
@@ -19,4 +20,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   "/transaction": (BuildContext context) => const TransactionScreen(),
   "/login": (BuildContext context) => const LoginScreen(),
   "/register": (BuildContext context) => const RegisterScreen(),
+  "/google-account": (BuildContext context) => const Google_account_signin()
 };

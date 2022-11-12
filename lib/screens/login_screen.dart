@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nullshop/screens/google_account_signin.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
@@ -10,7 +8,6 @@ import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nullshop/route.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -223,39 +220,34 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    // GoogleSignIn _googleSignIn = GoogleSignIn(
-    //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
-
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser!.authentication;
-    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+    final AuthService authService =
+        Provider.of<AuthService>(context, listen: false);
     try {
-      final UserCredential googleUserCredential =
-          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly'
+      ]).signIn();
+      if (googleUser == null) {
+        showSnackBar("Failed to sign in with Google.");
+        return;
+      }
+      final result = await authService.signInWithGoogle(googleUser: googleUser);
+      bool firstTimeSignIn = result["firstTimeSignIn"];
 
+      showSnackBar("Sign in successful", backgroundColor: Colors.green);
+
+      if (firstTimeSignIn) {
+        if (!mounted) return;
+        await Navigator.of(context)
+            .pushNamedAndRemoveUntil("/google-account", (rount) => false);
+        return;
+      }
+      log((await authService.getCurrentUser())?.email ?? "NULL USER");
       if (!mounted) return;
-      Navigator.pushNamed(context, "/google-account");
-    } catch (error) {}
-    //try {
-    //  GoogleSignIn googleSignIn = GoogleSignIn(scopes: [
-    //    'email',
-    //    'https://www.googleapis.com/auth/contacts.readonly'
-    //  ]);
-
-    //  final account = await googleSignIn.signIn();
-    //  if (account == null) {
-    //    showSnackBar("ERROR: Account is null");
-    //    return;
-    //  }
-    //  showSnackBar("Coming soon...");
-    //  log(account.email);
-    //} catch (e) {
-    //  showSnackBar(
-    //      "This device cannot be signed with google! try using newer api version.");
-    //}
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
+    } catch (error) {
+      showSnackBar(
+          "This device cannot be signed with google! try using newer api version. $error");
+    }
   }
 }

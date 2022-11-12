@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nullshop/models/user_model.dart';
 import 'package:nullshop/services/database_service_interface.dart';
 
@@ -22,6 +23,44 @@ class AuthService {
     } catch (e) {
       throw "$e";
     }
+  }
+
+  Future<Map<dynamic, dynamic>> signInWithGoogle(
+      {required GoogleSignInAccount googleUser}) async {
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final auth.OAuthCredential googleCredential =
+        auth.GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final auth.UserCredential googleUserCredential =
+        await _firebaseAuth.signInWithCredential(googleCredential);
+
+    if (googleUserCredential.user == null) {
+      throw Exception("Create user with google failed!");
+    }
+
+    final newUser = User(
+        uid: googleUserCredential.user!.uid,
+        email: googleUserCredential.user!.email!,
+        username: googleUserCredential.user!.displayName!,
+        coin: 0,
+        role: "user");
+
+    final isFirstLogin =
+        googleUserCredential.additionalUserInfo?.isNewUser ?? false;
+
+    if (isFirstLogin) {
+      await _databaseService.createUserFromModel(user: newUser);
+    }
+
+    return {
+      "user": newUser,
+      "firstTimeSignIn":
+          googleUserCredential.additionalUserInfo?.isNewUser ?? false
+    };
   }
 
   Future<void> signOut() async {

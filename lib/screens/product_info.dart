@@ -62,7 +62,21 @@ class _ProductInfoState extends State<ProductInfo> {
                       child: Text("NO IMAGE",
                           style: Theme.of(context).textTheme.headline1)),
                 )
-              : Image.network(product.photoURL!, fit: BoxFit.cover),
+              : Image.network(
+                  product.photoURL!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 180,
+                    color: kColorsRed,
+                    child: const Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Center(
+                        child: Text(
+                            "Image not available! Maybe max quota of firebase. Please report this to administrator."),
+                      ),
+                    ),
+                  ),
+                ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),

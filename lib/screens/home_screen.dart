@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseServiceInterface>(context, listen: false);
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -38,11 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  ...ProductCategory.values.map(
-                    (t) => SizedBox(
+                  ...[
+                    "All Items",
+                    ...ProductCategory.values.map((t) => t.name.toString())
+                  ].map(
+                    (u) => SizedBox(
                       width: 100,
                       child: Center(
-                        child: Text(t.name,
+                        child: Text(u,
                             style: Theme.of(context).textTheme.subtitle1),
                       ),
                     ),
@@ -92,7 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(6.0),
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, "/product-info");
+                        Navigator.pushNamed(context, "/product-info",
+                            arguments: snapshot.data?[index]);
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,20 +115,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : ClipRRect(
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(20)),
-                                    child: Image.network(imageUrl,
-                                        fit: BoxFit.cover)),
+                                    child: FadeInImage.assetNetwork(
+                                      placeholder:
+                                          "assets/placeholderimage.png",
+                                      image: imageUrl,
+                                      fit: BoxFit.cover,
+                                      imageErrorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                        height: 180,
+                                        color: kColorsRed,
+                                        child: const Padding(
+                                          padding: EdgeInsets.only(left: 8.0),
+                                          child: Center(
+                                            child: Text(
+                                                "Image not available! Maybe max quota of firebase. Please report this to administrator."),
+                                          ),
+                                        ),
+                                      ),
+                                    )),
                           ),
                           const SizedBox(
                             height: 12,
                           ),
-                          Text(snapshot.data![index]!.name,
-                              style: Theme.of(context).textTheme.subtitle1),
+                          Text(
+                            snapshot.data![index]!.name,
+                            style: Theme.of(context).textTheme.subtitle1,
+                            maxLines: 2,
+                          ),
                           const SizedBox(
                             height: 6,
                           ),
                           Text("\$ ${snapshot.data![index]!.price.toString()}",
                               style: const TextStyle(
-                                  fontSize: 14.0, fontWeight: FontWeight.w500)),
+                                  fontSize: 14.0, fontWeight: FontWeight.w500),
+                              maxLines: 1),
                         ],
                       ),
                     ),

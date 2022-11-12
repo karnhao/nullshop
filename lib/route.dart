@@ -20,5 +20,5 @@ final Map<String, WidgetBuilder> routes = <String, WidgetBuilder>{
   "/transaction": (BuildContext context) => const TransactionScreen(),
   "/login": (BuildContext context) => const LoginScreen(),
   "/register": (BuildContext context) => const RegisterScreen(),
-  "/google-account": (BuildContext context) => const Google_account_signin()
+  "/google-account": (BuildContext context) => const Google_account_signin(),
 };

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:nullshop/screens/google_account_signin.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/themes/colors.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
@@ -217,12 +218,22 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    GoogleSignIn _googleSignIn = GoogleSignIn(
-        scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+    // GoogleSignIn _googleSignIn = GoogleSignIn(
+    //     scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
 
-    // after success route to home.
-    if (!mounted) return;
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil("/google-account", (route) => false);
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
+    final OAuthCredential googleCredential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    try {
+      final UserCredential googleUserCredential =
+          await FirebaseAuth.instance.signInWithCredential(googleCredential);
+
+      if (!mounted) return;
+      Navigator.pushNamed(context, "/google-account");
+    } catch (error) {}
   }
 }

@@ -99,7 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: InkWell(
                         onTap: () {
                           Navigator.pushNamed(context, "/product-info",
-                              arguments: snapshot.data?[index]);
+                                  arguments: snapshot.data?[index])
+                              .then((value) {
+                            if (value == true) {
+                              setState(() {});
+                            }
+                          });
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

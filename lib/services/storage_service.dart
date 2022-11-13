@@ -24,4 +24,8 @@ class StorageService {
     }
     return null;
   }
+
+  Future<void> removeProductImage({required String url}) async {
+    await _firebaseStorage.refFromURL(url).delete();
+  }
 }

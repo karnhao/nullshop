@@ -14,15 +14,16 @@ import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:provider/provider.dart';
 
-class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+class EditProductScreen extends StatefulWidget {
+  const EditProductScreen({super.key});
 
   @override
-  State<AddProductScreen> createState() => _AddProductScreenState();
+  State<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _EditProductScreenState extends State<EditProductScreen> {
   File? imageFile;
+  String? oldImageUrl;
   final picker = ImagePicker();
 
   final formKey = GlobalKey<FormState>();
@@ -30,10 +31,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
       productName,
       productPrice,
       productQuantity,
-      productDescription;
+      productDescription,
+      productUid;
+
+  Product? product;
+  bool update = true;
 
   @override
   Widget build(BuildContext context) {
+    if (update) {
+      product = ModalRoute.of(context)?.settings.arguments as Product;
+      productName = product!.name;
+      productPrice = product!.price.toString();
+      productQuantity = product!.quantity.toString();
+      productDescription = product!.description;
+      productCategory = product!.category!.name.toString();
+      productUid = product!.uid;
+      oldImageUrl = product!.photoURL;
+      update = false;
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -44,7 +60,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             }),
         backgroundColor: kColorsPurple,
         title: Text(
-          'Add Product',
+          'Edit Product',
           style: Theme.of(context).textTheme.headline3,
         ),
         shape:
@@ -56,12 +72,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onPressed: () {},
               icon: SvgPicture.asset("assets/icons/msg.svg",
                   color: kColorsCream)),
-          IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/profile');
-              },
-              icon:
-                  SvgPicture.asset("assets/icons/me.svg", color: kColorsCream))
         ],
       ),
       body: InkWell(
@@ -99,11 +109,29 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(15)),
                                         color: kColorsRed),
-                                    child: Center(
-                                        child: Text("Add image",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .subtitle1)),
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        oldImageUrl != null
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                    oldImageUrl!,
+                                                    fit: BoxFit.cover),
+                                              )
+                                            : Container(),
+                                        const Center(
+                                          child: Text(
+                                            "Change image",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   )),
                       ),
                       createProductCategory(),
@@ -121,7 +149,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   },
                   child: const MainBtnWidget(
                     colorBtn: kColorsPurple,
-                    textBtn: "Confirm",
+                    textBtn: "Confirm Editing",
                     haveIcon: false,
                     isTransparent: false,
                   ),
@@ -138,6 +166,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.name,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: Theme.of(context).textTheme.subtitle1,
@@ -159,6 +188,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.price.toInt().toString(),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
@@ -183,6 +213,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.quantity.toString(),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
@@ -207,6 +238,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.description,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: Theme.of(context).textTheme.subtitle1,
@@ -334,6 +366,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     String? url;
 
     if (imageFile != null) {
+      if (oldImageUrl != null) {
+        await storageService.removeProductImage(url: oldImageUrl!);
+      }
       url = await storageService.uploadProductImage(imageFile: imageFile!);
     }
     final product = Product(
@@ -342,19 +377,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
         quantity: int.parse(productQuantity!),
         category: Product.getProductCategory(productCategory!),
         description: productDescription,
-        photoURL: url);
+        photoURL: url ?? oldImageUrl,
+        uid: productUid);
 
     try {
-      await databaseService.addProduct(product: product);
+      await databaseService.updateProductFromUid(
+          uid: productUid!, product: product);
     } catch (e) {
       log(e.toString());
       showSnackBar("An error has occurred - ${e.toString()}");
     }
 
     if (!mounted) return;
+    showSnackBar("Update product successful", backgroundColor: Colors.green);
     Navigator.of(context).pop();
-    showSnackBar("Add product successful", backgroundColor: Colors.green);
-    if (!mounted) return;
     Navigator.of(context).pop();
+    Navigator.of(context).pop(true); // Reload Product In home screen
   }
 }

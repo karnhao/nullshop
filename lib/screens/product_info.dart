@@ -46,26 +46,18 @@ class _ProductInfoState extends State<ProductInfo> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "/add-product");
+                  removeHandle(product);
                 },
-                icon: SvgPicture.asset(
-                  "assets/icons/add.svg",
-                  color: kColorsWhite,
-                )),
-            IconButton(
-                onPressed: null,
-                icon: SvgPicture.asset(
-                  "assets/icons/msg.svg",
-                  color: kColorsWhite,
+                icon: const Icon(
+                  Icons.delete_forever_outlined,
+                  color: Colors.white,
                 )),
             IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/profile');
+                  Navigator.pushNamed(context, "/edit-product",
+                      arguments: product);
                 },
-                icon: SvgPicture.asset(
-                  "assets/icons/me.svg",
-                  color: kColorsWhite,
-                ))
+                icon: const Icon(Icons.edit_outlined, color: Colors.white)),
           ]),
       body: ListView(children: [
         AspectRatio(
@@ -218,7 +210,7 @@ class _ProductInfoState extends State<ProductInfo> {
                           Navigator.pop(context, "Finish");
                           showSnackBar('Buy successful!',
                               backgroundColor: Colors.green);
-                          Navigator.pop(context);
+                          Navigator.pop(context, true);
                         }).catchError((e) {
                           Navigator.pop(context);
                           showSnackBar('$e');
@@ -255,5 +247,45 @@ class _ProductInfoState extends State<ProductInfo> {
         time: time,
         timeMillis: date.millisecondsSinceEpoch));
     await transactionService.update(user.uid, tc);
+  }
+
+  Future<void> removeHandle(Product product) async {
+    try {
+      final databaseService =
+          Provider.of<DatabaseServiceInterface>(context, listen: false);
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Remove"),
+                content: Text(
+                    "Are you sure to remove ${product.name} from shoping? It will lost forever."),
+                actionsAlignment: MainAxisAlignment.spaceAround,
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, "Cancel");
+                      },
+                      child: const Text("Cancel")),
+                  TextButton(
+                      onPressed: () {
+                        databaseService
+                            .removeProduct(uid: product.uid!)
+                            .then((v) {
+                          Navigator.pop(context, "Finish");
+                          showSnackBar('Remove successful!',
+                              backgroundColor: Colors.green);
+                          Navigator.pop(context, true);
+                        }).catchError((e) {
+                          Navigator.pop(context);
+                          showSnackBar('$e');
+                        });
+                      },
+                      child: const Text("Delete",
+                          style: TextStyle(color: Colors.red))),
+                ],
+              ));
+    } catch (e) {
+      showSnackBar('$e');
+    }
   }
 }

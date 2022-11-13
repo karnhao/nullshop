@@ -127,7 +127,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                       color: kColorsGrey)),
                               InkWell(
                                   onTap: () {
-                                    Navigator.pushNamed(context, '/register');
+                                    Navigator.pushNamed(context, '/register')
+                                        .then((value) {
+                                      if (value == "google") {
+                                        googleLoginHandle(context: context);
+                                      }
+                                    });
                                   },
                                   child: const Text('Sign Up',
                                       style: TextStyle(

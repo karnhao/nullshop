@@ -40,7 +40,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
   @override
   Widget build(BuildContext context) {
     if (update) {
-      log("update");
       product = ModalRoute.of(context)?.settings.arguments as Product;
       productName = product!.name;
       productPrice = product!.price.toString();

@@ -55,15 +55,7 @@ class _ProductInfoState extends State<ProductInfo> {
             IconButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/edit-product",
-                          arguments: product)
-                      .then((value) {
-                    Map<String, dynamic> value2 = value as Map<String, dynamic>;
-                    if (value2["result"] == true) {
-                      setState(() {
-                        Navigator.pop(context, true);
-                      });
-                    }
-                  });
+                      arguments: product);
                 },
                 icon: const Icon(Icons.edit_outlined, color: Colors.white)),
           ]),

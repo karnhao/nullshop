@@ -14,14 +14,14 @@ import 'package:nullshop/widgets/input_decoration.dart';
 import 'package:nullshop/widgets/main_btn.dart';
 import 'package:provider/provider.dart';
 
-class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+class EditProductScreen extends StatefulWidget {
+  const EditProductScreen({super.key});
 
   @override
-  State<AddProductScreen> createState() => _AddProductScreenState();
+  State<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _EditProductScreenState extends State<EditProductScreen> {
   File? imageFile;
   final picker = ImagePicker();
 
@@ -32,8 +32,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
       productQuantity,
       productDescription;
 
+  Product? product;
+
   @override
   Widget build(BuildContext context) {
+    log("Test");
+    product = ModalRoute.of(context)?.settings.arguments as Product;
+    productCategory = product!.category.toString();
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -44,7 +49,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             }),
         backgroundColor: kColorsPurple,
         title: Text(
-          'Add Product',
+          'Edit Product',
           style: Theme.of(context).textTheme.headline3,
         ),
         shape:
@@ -56,12 +61,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               onPressed: () {},
               icon: SvgPicture.asset("assets/icons/msg.svg",
                   color: kColorsCream)),
-          IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/profile');
-              },
-              icon:
-                  SvgPicture.asset("assets/icons/me.svg", color: kColorsCream))
         ],
       ),
       body: InkWell(
@@ -78,34 +77,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: InkWell(
-                            onTap: (() {
-                              showButtomSheet(context);
-                            }),
-                            child: (imageFile != null)
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Image.file(imageFile!,
-                                        width: 153,
-                                        height: 153,
-                                        fit: BoxFit.cover),
-                                  )
-                                : Container(
-                                    width: 153,
-                                    height: 153,
-                                    decoration: const BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(15)),
-                                        color: kColorsRed),
-                                    child: Center(
-                                        child: Text("Add image",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .subtitle1)),
-                                  )),
-                      ),
                       createProductCategory(),
                       createProductName(),
                       createProductPrice(),
@@ -138,6 +109,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.name,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: Theme.of(context).textTheme.subtitle1,
@@ -159,6 +131,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.price.toInt().toString(),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
@@ -183,6 +156,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.quantity.toString(),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.digitsOnly
@@ -207,6 +181,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
       child: TextFormField(
+          initialValue: product!.description,
           keyboardType: TextInputType.text,
           autofocus: false,
           style: Theme.of(context).textTheme.subtitle1,
@@ -263,56 +238,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ));
   }
 
-  Future<void> showButtomSheet(BuildContext context) {
-    return showModalBottomSheet(
-        context: context,
-        builder: ((context) {
-          return Wrap(
-            children: [
-              ListTile(
-                leading: SvgPicture.asset('assets/icons/gallery.svg',
-                    color: kColorsPurple),
-                title: Text("Gallery",
-                    style: Theme.of(context).textTheme.subtitle1),
-                onTap: () {
-                  openGallery(context);
-                },
-              ),
-              ListTile(
-                  leading: SvgPicture.asset('assets/icons/camera.svg',
-                      color: kColorsPurple),
-                  title: Text("Camera",
-                      style: Theme.of(context).textTheme.subtitle1),
-                  onTap: () {
-                    openCamera(context);
-                  })
-            ],
-          );
-        }));
-  }
-
-  openGallery(BuildContext context) async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-      } else {}
-    });
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
-  openCamera(BuildContext context) async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-      } else {}
-    });
-    if (!mounted) return;
-    Navigator.of(context).pop();
-  }
-
   Future<void> confirmHandle({required BuildContext context}) async {
     showDialog(
         context: context,
@@ -325,10 +250,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final storageService = Provider.of<StorageService>(context, listen: false);
 
     if (!formKey.currentState!.validate()) {
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context);
-        showSnackBar("Data not founded", backgroundColor: Colors.red);
-      });
+      Navigator.pop(context);
+      showSnackBar("Data not founded", backgroundColor: Colors.red);
+      return;
     }
     formKey.currentState!.save();
 

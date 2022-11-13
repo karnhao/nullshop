@@ -31,6 +31,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
             Provider.of<TransactionServiceInterface>(context, listen: false);
         transactionService.get(user!.uid).then((value) {
           setState(() {
+            value.items
+                .sort(((a, b) => b.timeMillis!.compareTo(a.timeMillis!)));
             transactions = value.items;
             flag = true;
           });
@@ -141,48 +143,65 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                   decoration: BoxDecoration(
                                       color: kColorsCream,
                                       borderRadius: BorderRadius.circular(20)),
-                                  child: Stack(
-                                    children: [
-                                      // Name Product
-                                      Positioned(
-                                        bottom: 20,
-                                        height: 65,
-                                        left: 20,
-                                        child: Text(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Product Time
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              transactions[index].time ?? "",
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: kColorsGrey),
+                                            ),
+                                            //Quantity Product
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 20),
+                                              child: Text(
+                                                "x${transactions[index].productCount}",
+                                                style: const TextStyle(
+                                                    fontSize: 10.0,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: kColorsGrey),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        // Name Product
+                                        Text(
                                           transactions[index].productName,
                                           style: const TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w700,
                                               color: kColorsPurple),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.fade,
                                         ),
-                                      ),
-                                      //Quantity Product
-                                      Positioned(
-                                        bottom: 20,
-                                        height: 65,
-                                        right: 20,
-                                        child: Text(
-                                          "x${transactions[index].productCount}",
-                                          style: const TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: kColorsGrey),
-                                        ),
-                                      ),
-                                      //Price Product
-                                      Positioned(
-                                        bottom: 20,
-                                        right: 20,
-                                        child: Text(
-                                          "\$${transactions[index].productPrice.toString()}",
-                                          style: const TextStyle(
+                                        //Price Product
+                                        Text(
+                                          "\$ ${transactions[index].productPrice > 0 ? '-' : '+'}${(transactions[index].productPrice * transactions[index].productCount).abs().toString()}",
+                                          style: TextStyle(
                                               letterSpacing: 0.7,
-                                              fontSize: 21,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w800,
-                                              color: kColorsRed),
-                                        ),
-                                      )
-                                    ],
+                                              color: transactions[index]
+                                                          .productPrice >
+                                                      0
+                                                  ? kColorsRed
+                                                  : Colors.green),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );

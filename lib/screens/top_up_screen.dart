@@ -1,7 +1,10 @@
+import 'package:nullshop/models/transaction_model.dart';
 import 'package:nullshop/models/user_model.dart';
 import 'package:nullshop/services/auth_service.dart';
 import 'package:nullshop/services/database_service_interface.dart';
+import 'package:nullshop/services/transaction_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/date_time_format.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/coin_btn_widget.dart';
 import 'package:nullshop/widgets/main_btn.dart';
@@ -86,12 +89,35 @@ class _TopUpScreenState extends State<TopUpScreen> {
                                           context,
                                           listen: false);
 
+                                  final transactionService =
+                                      Provider.of<TransactionServiceInterface>(
+                                          context,
+                                          listen: false);
+
                                   databaseService
                                       .updateUserFromUid(
                                           uid: user!.uid, user: user!)
                                       .then((value) {
-                                    showSnackBar('Success',
-                                        backgroundColor: Colors.green);
+                                    transactionService
+                                        .get(user!.uid)
+                                        .then((value) {
+                                      value.items.add(TransactionObject(
+                                          productName: "Top up",
+                                          productPrice: -topup.toDouble(),
+                                          productCount: 1,
+                                          collectionUID: user!.uid,
+                                          time: dateTimeFormat(
+                                              DateTime.now().toLocal()),
+                                          timeMillis: DateTime.now()
+                                              .toLocal()
+                                              .millisecondsSinceEpoch));
+                                      transactionService
+                                          .update(user!.uid, value)
+                                          .then(((value) {
+                                        showSnackBar('Success',
+                                            backgroundColor: Colors.green);
+                                      }));
+                                    });
                                   }).catchError((e) {
                                     showSnackBar("Failed $e");
                                   });

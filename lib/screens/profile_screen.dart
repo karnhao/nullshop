@@ -19,18 +19,22 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   model.User? user;
+  bool flag = false;
 
   @override
   Widget build(BuildContext context) {
-    final AuthService authService =
-        Provider.of<AuthService>(context, listen: false);
-    authService.getCurrentUser().then((currentUser) {
-      setState(() {
-        user = currentUser!;
+    if (!flag) {
+      final AuthService authService =
+          Provider.of<AuthService>(context, listen: false);
+      authService.getCurrentUser().then((currentUser) {
+        setState(() {
+          user = currentUser!;
+          flag = true;
+        });
+      }).catchError((e) {
+        // Close page before download finished.
       });
-    }).catchError((e) {
-      // Close page before download finished.
-    });
+    }
 
     return Scaffold(
       backgroundColor: kColorsCream,

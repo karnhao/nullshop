@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nullshop/models/product_model.dart';
+import 'package:nullshop/models/transaction_model.dart';
+import 'package:nullshop/services/auth_service.dart';
+import 'package:nullshop/services/database_service_interface.dart';
+import 'package:nullshop/services/transaction_service_interface.dart';
 import 'package:nullshop/themes/colors.dart';
+import 'package:nullshop/utils/date_time_format.dart';
 import 'package:nullshop/utils/show_snack_bar.dart';
 import 'package:nullshop/widgets/main_btn.dart';
+import 'package:provider/provider.dart';
 
 class ProductInfo extends StatefulWidget {
   const ProductInfo({super.key});
@@ -16,8 +22,7 @@ class _ProductInfoState extends State<ProductInfo> {
   int amount = 0;
   @override
   Widget build(BuildContext context) {
-    final Product product =
-        ModalRoute.of(context)?.settings.arguments as Product;
+    Product product = ModalRoute.of(context)?.settings.arguments as Product;
     return Scaffold(
       appBar: AppBar(
           title: Text(
@@ -25,10 +30,19 @@ class _ProductInfoState extends State<ProductInfo> {
             style: Theme.of(context).textTheme.headline3,
           ),
           shape:
-              const Border(bottom: BorderSide(color: kColorsGrey, width: 1.5)),
+              const Border(bottom: BorderSide(color: kColorsGrey, width: 0.5)),
           elevation: 0,
           toolbarHeight: 60,
           backgroundColor: kColorsPurple,
+          leading: IconButton(
+            icon: SvgPicture.asset(
+              "assets/icons/back.svg",
+              color: kColorsWhite,
+            ),
+            onPressed: () {
+              Navigator.pop(context, "/home");
+            },
+          ),
           actions: [
             IconButton(
                 onPressed: () {
@@ -132,11 +146,17 @@ class _ProductInfoState extends State<ProductInfo> {
               ),
               InkWell(
                 onTap: () {
-                  showSnackBar(
-                      "Database Service not available. Please wait for future updates.");
+                  setState(() {
+                    try {
+                      if (amount <= 0) return;
+                      buyHandle(product);
+                    } catch (e) {
+                      showSnackBar('$e');
+                    }
+                  });
                 },
-                child: const MainBtnWidget(
-                    colorBtn: Colors.green,
+                child: MainBtnWidget(
+                    colorBtn: (amount > 0) ? Colors.green : Colors.grey,
                     textBtn: "Buy",
                     isTransparent: false,
                     haveIcon: false),
@@ -167,5 +187,73 @@ class _ProductInfoState extends State<ProductInfo> {
     setState(() {
       amount--;
     });
+  }
+
+  void buyHandle(Product product) {
+    try {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Buy"),
+                content: Text(
+                    "Buy $amount ${product.name}? It will cost ${amount * product.price} \$"),
+                actionsAlignment: MainAxisAlignment.spaceAround,
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, "Cancel");
+                      },
+                      child: const Text("Cancel")),
+                  TextButton(
+                      onPressed: () {
+                        buy(product).then((v) {
+                          product = Product(
+                              name: product.name,
+                              price: product.price,
+                              quantity: product.quantity - amount,
+                              category: product.category,
+                              description: product.description,
+                              photoURL: product.photoURL,
+                              uid: product.uid);
+                          Navigator.pop(context, "Finish");
+                          showSnackBar('Buy successful!',
+                              backgroundColor: Colors.green);
+                          Navigator.pop(context);
+                        }).catchError((e) {
+                          Navigator.pop(context);
+                          showSnackBar('$e');
+                        });
+                      },
+                      child: const Text("Confirm")),
+                ],
+              ));
+    } catch (e) {
+      showSnackBar('$e');
+    }
+  }
+
+  Future<void> buy(Product product) async {
+    final databaseService =
+        Provider.of<DatabaseServiceInterface>(context, listen: false);
+    final transactionService =
+        Provider.of<TransactionServiceInterface>(context, listen: false);
+    final authService = Provider.of<AuthService>(context, listen: false);
+
+    final date = DateTime.now().toLocal();
+    String time = dateTimeFormat(date);
+
+    final user = await authService.getCurrentUser();
+    await databaseService.buyProduct(
+        userUid: user!.uid, productUid: product.uid!, buyAmount: amount);
+
+    TransactionCollection tc = await transactionService.get(user.uid);
+    tc.items.add(TransactionObject(
+        productName: product.name,
+        productPrice: product.price,
+        productCount: amount,
+        collectionUID: user.uid,
+        time: time,
+        timeMillis: date.millisecondsSinceEpoch));
+    await transactionService.update(user.uid, tc);
   }
 }

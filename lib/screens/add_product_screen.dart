@@ -325,10 +325,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final storageService = Provider.of<StorageService>(context, listen: false);
 
     if (!formKey.currentState!.validate()) {
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context);
-        showSnackBar("Data not founded", backgroundColor: Colors.red);
-      });
+      Navigator.pop(context);
+      showSnackBar("Data not founded", backgroundColor: Colors.red);
+      return;
     }
     formKey.currentState!.save();
 

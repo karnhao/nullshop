@@ -99,7 +99,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 10),
             InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pop(context, "google");
+                },
                 child: const MainBtnWidget(
                     colorBtn: kColorsPurple,
                     textBtn: 'Sign Up with Google',

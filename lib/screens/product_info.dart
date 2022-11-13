@@ -53,7 +53,18 @@ class _ProductInfoState extends State<ProductInfo> {
                   color: Colors.white,
                 )),
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, "/edit-product",
+                          arguments: product)
+                      .then((value) {
+                    Map<String, dynamic> value2 = value as Map<String, dynamic>;
+                    if (value2["result"] == true) {
+                      setState(() {
+                        Navigator.pop(context, true);
+                      });
+                    }
+                  });
+                },
                 icon: const Icon(Icons.edit_outlined, color: Colors.white)),
           ]),
       body: ListView(children: [

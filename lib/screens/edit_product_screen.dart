@@ -23,6 +23,7 @@ class EditProductScreen extends StatefulWidget {
 
 class _EditProductScreenState extends State<EditProductScreen> {
   File? imageFile;
+  String? oldImageUrl;
   final picker = ImagePicker();
 
   final formKey = GlobalKey<FormState>();
@@ -30,15 +31,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
       productName,
       productPrice,
       productQuantity,
-      productDescription;
+      productDescription,
+      productUid;
 
   Product? product;
+  bool update = true;
 
   @override
   Widget build(BuildContext context) {
-    log("Test");
-    product = ModalRoute.of(context)?.settings.arguments as Product;
-    productCategory = product!.category.toString();
+    if (update) {
+      log("update");
+      product = ModalRoute.of(context)?.settings.arguments as Product;
+      productName = product!.name;
+      productPrice = product!.price.toString();
+      productQuantity = product!.quantity.toString();
+      productDescription = product!.description;
+      productCategory = product!.category!.name.toString();
+      productUid = product!.uid;
+      oldImageUrl = product!.photoURL;
+      update = false;
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -77,6 +89,52 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: InkWell(
+                            onTap: (() {
+                              showButtomSheet(context);
+                            }),
+                            child: (imageFile != null)
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: Image.file(imageFile!,
+                                        width: 153,
+                                        height: 153,
+                                        fit: BoxFit.cover),
+                                  )
+                                : Container(
+                                    width: 153,
+                                    height: 153,
+                                    decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                        color: kColorsRed),
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        oldImageUrl != null
+                                            ? ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Image.network(
+                                                    oldImageUrl!,
+                                                    fit: BoxFit.cover),
+                                              )
+                                            : Container(),
+                                        const Center(
+                                          child: Text(
+                                            "Change image",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                      ),
                       createProductCategory(),
                       createProductName(),
                       createProductPrice(),
@@ -92,7 +150,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   child: const MainBtnWidget(
                     colorBtn: kColorsPurple,
-                    textBtn: "Confirm",
+                    textBtn: "Confirm Editing",
                     haveIcon: false,
                     isTransparent: false,
                   ),
@@ -238,6 +296,56 @@ class _EditProductScreenState extends State<EditProductScreen> {
         ));
   }
 
+  Future<void> showButtomSheet(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: ((context) {
+          return Wrap(
+            children: [
+              ListTile(
+                leading: SvgPicture.asset('assets/icons/gallery.svg',
+                    color: kColorsPurple),
+                title: Text("Gallery",
+                    style: Theme.of(context).textTheme.subtitle1),
+                onTap: () {
+                  openGallery(context);
+                },
+              ),
+              ListTile(
+                  leading: SvgPicture.asset('assets/icons/camera.svg',
+                      color: kColorsPurple),
+                  title: Text("Camera",
+                      style: Theme.of(context).textTheme.subtitle1),
+                  onTap: () {
+                    openCamera(context);
+                  })
+            ],
+          );
+        }));
+  }
+
+  openGallery(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        imageFile = File(pickedFile.path);
+      } else {}
+    });
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
+  openCamera(BuildContext context) async {
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        imageFile = File(pickedFile.path);
+      } else {}
+    });
+    if (!mounted) return;
+    Navigator.of(context).pop();
+  }
+
   Future<void> confirmHandle({required BuildContext context}) async {
     showDialog(
         context: context,
@@ -259,6 +367,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
     String? url;
 
     if (imageFile != null) {
+      if (oldImageUrl != null) {
+        await storageService.removeProductImage(url: oldImageUrl!);
+      }
       url = await storageService.uploadProductImage(imageFile: imageFile!);
     }
     final product = Product(
@@ -267,19 +378,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
         quantity: int.parse(productQuantity!),
         category: Product.getProductCategory(productCategory!),
         description: productDescription,
-        photoURL: url);
+        photoURL: url ?? oldImageUrl,
+        uid: productUid);
 
     try {
-      await databaseService.addProduct(product: product);
+      await databaseService.updateProductFromUid(
+          uid: productUid!, product: product);
     } catch (e) {
       log(e.toString());
       showSnackBar("An error has occurred - ${e.toString()}");
     }
 
     if (!mounted) return;
+    showSnackBar("Update product successful", backgroundColor: Colors.green);
     Navigator.of(context).pop();
-    showSnackBar("Add product successful", backgroundColor: Colors.green);
-    if (!mounted) return;
     Navigator.of(context).pop();
+    Navigator.of(context).pop(true); // Reload Product In home screen
   }
 }

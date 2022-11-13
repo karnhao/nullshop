@@ -57,6 +57,14 @@ class Product {
         return ProductCategory.eraser;
       case "gun":
         return ProductCategory.gun;
+      case "food":
+        return ProductCategory.food;
+      case "drink":
+        return ProductCategory.drink;
+      case "nuke":
+        return ProductCategory.nuke;
+      case "deathstar":
+        ProductCategory.deathStar;
     }
     return ProductCategory.other;
   }

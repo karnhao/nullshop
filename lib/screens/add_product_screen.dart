@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -316,13 +317,17 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
         builder: (context) => const Center(
               child: CircularProgressIndicator(strokeWidth: 4),
             ));
-
     final databaseService =
         Provider.of<DatabaseServiceInterface>(context, listen: false);
 
     final storageService = Provider.of<StorageService>(context, listen: false);
 
-    if (!formKey.currentState!.validate()) return;
+    if (!formKey.currentState!.validate()) {
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.pop(context);
+        showSnackBar("Data not founded", backgroundColor: Colors.red);
+      });
+    }
     formKey.currentState!.save();
 
     String? url;
@@ -337,7 +342,13 @@ class _AddProdectScreenState extends State<AddProdectScreen> {
         category: Product.getProductCategory(productCategory!),
         description: productDescription,
         photoURL: url);
-    await databaseService.addProduct(product: product);
+
+    try {
+      await databaseService.addProduct(product: product);
+    } catch (e) {
+      log(e.toString());
+      showSnackBar("An error has occurred - ${e.toString()}");
+    }
 
     if (!mounted) return;
     Navigator.of(context).pop();

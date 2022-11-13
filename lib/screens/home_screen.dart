@@ -153,8 +153,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             Text(
                                 "\$ ${snapshot.data![index]!.price.toString()}",
                                 style: const TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w500),
+                                    letterSpacing: 0.7,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: kColorsRed),
                                 maxLines: 1),
                           ],
                         ),

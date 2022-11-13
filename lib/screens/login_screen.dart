@@ -220,7 +220,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> googleLoginHandle({required BuildContext context}) async {
-    log("1");
     final AuthService authService =
         Provider.of<AuthService>(context, listen: false);
     try {
@@ -228,7 +227,6 @@ class _LoginScreenState extends State<LoginScreen> {
         'email',
         'https://www.googleapis.com/auth/contacts.readonly'
       ]).signIn();
-      log("2");
       if (googleUser == null) {
         showSnackBar("Failed to sign in with Google.");
         return;

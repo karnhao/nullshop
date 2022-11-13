@@ -10,7 +10,7 @@ class TranSactionService extends TransactionServiceInterface {
   }
 
   @override
-  Future<TransactionCollection?> get(String uid) async {
+  Future<TransactionCollection> get(String uid) async {
     final data =
         (await _firebaseStore.collection('transactions').doc(uid).get()).data();
     if (data == null) return TransactionCollection(uid: uid, items: []);

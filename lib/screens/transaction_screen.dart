@@ -29,14 +29,8 @@ class _TransactionScreenState extends State<TransactionScreen> {
         user = value;
         final transactionService =
             Provider.of<TransactionServiceInterface>(context, listen: false);
-        transactionService.get("test").then((value) {
+        transactionService.get(user!.uid).then((value) {
           setState(() {
-            value!.items.clear();
-            value.items.add(TransactionObject(
-                productName: "VsCode Stable",
-                productPrice: 1000,
-                productCount: 2));
-            transactionService.update("test", value);
             transactions = value.items;
             flag = true;
           });
@@ -168,7 +162,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         height: 65,
                                         right: 20,
                                         child: Text(
-                                          "×${transactions[index].productCount}",
+                                          "x${transactions[index].productCount}",
                                           style: const TextStyle(
                                               fontSize: 20.0,
                                               fontWeight: FontWeight.w600,
@@ -180,7 +174,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                                         bottom: 20,
                                         right: 20,
                                         child: Text(
-                                          "฿${transactions[index].productPrice.toString()}",
+                                          "\$${transactions[index].productPrice.toString()}",
                                           style: const TextStyle(
                                               letterSpacing: 0.7,
                                               fontSize: 21,

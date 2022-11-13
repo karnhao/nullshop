@@ -63,4 +63,53 @@ class DatabaseService extends DatabaseServiceInterface {
         uid: docProduct.id);
     await docProduct.set(newProduct.toMap());
   }
+
+  @override
+  Future<void> buyProduct(
+      {required String userUid,
+      required String productUid,
+      required int buyAmount}) async {
+    final user = await getUserFromUid(uid: userUid);
+    final product = await getProductFromUid(uid: productUid);
+    if (user == null || product == null) {
+      throw Exception("User or product not found");
+    }
+    if (product.quantity < buyAmount) {
+      throw Exception("Out of product, try decrease some buy amount");
+    }
+    if ((user.coin ?? 0) < product.price * buyAmount) {
+      throw Exception("Not enough coin.");
+    }
+    user.coin = user.coin! - (product.price * buyAmount);
+
+    final updatedProduct = Product(
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity - buyAmount,
+        category: product.category,
+        description: product.description,
+        photoURL: product.photoURL,
+        uid: productUid);
+
+    await updateUserFromUid(uid: user.uid, user: user);
+    await updateProductFromUid(uid: productUid, product: updatedProduct);
+  }
+
+  @override
+  Future<void> removeProduct({required String uid}) async {
+    await _firebaseStore.collection('products').doc(uid).delete();
+  }
+
+  @override
+  Future<Product?> getProductFromUid({required String uid}) async {
+    final snapshot = await _firebaseStore.collection('products').doc(uid).get();
+    if (!snapshot.exists || snapshot.data() == null) return null;
+    return Product.fromMap(productMap: snapshot.data()!);
+  }
+
+  @override
+  Future<void> updateProductFromUid(
+      {required String uid, required Product product}) async {
+    await _firebaseStore.collection("products").doc(uid).set(product.toMap());
+  }
 }
